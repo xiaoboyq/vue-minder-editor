@@ -42,6 +42,8 @@ define(function (require, exports, module) {
     });
 
     this.hotbox = hotbox;
+    // 暴露window.minder.hotbox
+    minder.hotbox = hotbox;
   }
 
   return module.exports = HotboxRuntime;

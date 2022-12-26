@@ -10,8 +10,8 @@ define(function (require, exports, module) {
 
   Module.register('ResultModule', function () {
     var minder = this
-    // FIXME: 超级大坑，滴滴AgileTC用了 progress 记录测试结果，为了兼容这里只能继续用。
-    var RESULT_DATA = 'progress'
+    // FIXME: 超级大坑，滴滴AgileTC用了 result 记录测试结果，为了兼容这里只能继续用。
+    var RESULT_DATA = 'result'
     var DEFAULT_BACKGROUND = '#43BC00'
     var PASS_VALUE = 9
     var FAIL_VALUE = 1
@@ -23,8 +23,6 @@ define(function (require, exports, module) {
         g.addStop(0, '#fff');
         g.addStop(1, '#ccc');
     });
-    //
-    // minder.getPaper().addResource(FRAME_GRAD);
     // 进度图标的图形
     var ResultIcon = kity.createClass('ResultIcon', {
       base: kity.Group,
@@ -33,7 +31,7 @@ define(function (require, exports, module) {
         this.setSize(20)
         this.create()
         this.setValue(value)
-        this.setId(utils.uuid('node_progress'))
+        this.setId(utils.uuid('node_result'))
         this.translate(0.5, 0.5)
       },
       setSize: function (size) {
@@ -52,10 +50,10 @@ define(function (require, exports, module) {
         this.fail = fail
         this.block = block
         this.skip = skip
-        },
+      },
       setValue: function (value) {
-        
-        SKIP_VALUE !== value ? this.pie.setAngle( - 360 * (value - 1) / 8).fill(DEFAULT_BACKGROUND) : this.pie.setAngle(360).fill("#fff")
+        ((value && value.length && value.indexOf(SKIP_VALUE) > -1) || value === SKIP_VALUE) ? this.pie.setAngle(360).fill("#fff") : this.pie.setAngle( - 360 * (value - 1) / 8).fill(DEFAULT_BACKGROUND)
+        // this.pie.setAngle(360).fill("#fff")
         this.check.setVisible(PASS_VALUE == value)
         this.fail.setVisible(FAIL_VALUE == value)
         this.block.setVisible(BLOCK_VALUE == value)

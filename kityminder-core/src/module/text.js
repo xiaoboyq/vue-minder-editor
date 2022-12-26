@@ -67,7 +67,7 @@ define(function(require, exports, module) {
                 'impact,chicago': -0.13,
                 'times new roman': -0.1,
                 'arial black,avant garde': -0.17,
-                'default': 0
+                'default': -0.14
             },
             'Win': {
                 '微软雅黑,Microsoft YaHei': -0.15,
@@ -169,7 +169,7 @@ define(function(require, exports, module) {
                 adjust = 0.9;
             }
 
-            textGroup.setTranslate(0, (adjust || 0) * fontSize);
+            textGroup.setTranslate(0, (adjust || 0.4) * fontSize);
 
             var rBox = new kity.Box(),
                 r = Math.round;

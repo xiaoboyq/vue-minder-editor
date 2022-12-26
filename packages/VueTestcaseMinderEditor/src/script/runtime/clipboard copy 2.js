@@ -1,4 +1,5 @@
 define(function (require, exports, module) {
+
   function ClipboardRuntime() {
     var minder = this.minder;
     var Data = window.kityminder.data;
@@ -109,7 +110,7 @@ define(function (require, exports, module) {
     }
     var guid = function () {
       // 出处：https://www.codenong.com/cs106429627/
-      return 'xxxxxx-xxxx'.replace(/[xy]/g, function (c) {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0
         var v = c === 'x' ? r : (r & 0x3 | 0x8)
         return v.toString(16)
@@ -120,20 +121,13 @@ define(function (require, exports, module) {
       if (node.children !== undefined && node.children.length > 0) {
         node.children.forEach(function (child) {
           child.data.id = guid()
-          child.data.path = undefined;
-          child.data.level = undefined;
-          child.data.expandState = undefined;
-          child.data.disable = undefined;
-          child.data.type = undefined;
-          child.data.loaded = true;
-          child.data.contextChanged = true;
-          child.data.changed = true;
           child.data.created = (new Date()).valueOf()
-          console.log('chid', child)
           updateChildrenNodesId(child)
         })
       }
     }
+
+
 
     var beforePaste = function (e) {
       if (document.activeElement == receiver.element) {
@@ -146,7 +140,6 @@ define(function (require, exports, module) {
         var state = fsm.state();
         var textData = clipBoardEvent.clipboardData.getData('text/plain');
         console.log('sNodes--复制-textData', textData)
-        console.log('state', state)
         switch (state) {
           case 'input': {
             // input状态下如果格式为application/km则不进行paste操作
@@ -164,24 +157,31 @@ define(function (require, exports, module) {
 
             if (MimeType.whichMimeType(textData) === 'application/km') {
               var nodes = decode(MimeType.getPureText(textData));
+              // resetNodes(nodes);
               var _node;
               sNodes.forEach(function (node) {
+                // nodes的递归遍历id
                 // 由于粘贴逻辑中为了排除子节点重新排序导致逆序，因此复制的时候倒过来
                 for (var i = nodes.length - 1; i >= 0; i--) {
-                  nodes[i].data.id = guid()
-                  nodes[i].data.path = undefined;
-                  nodes[i].data.level = undefined;
-                  nodes[i].data.expandState = undefined;
-                  nodes[i].data.disable = undefined;
-                  nodes[i].data.type = undefined;
-                  nodes[i].data.caseNum = undefined;
-                  updateChildrenNodesId(nodes[i])
                   _node = minder.createNode(null, node);
+                  // nodes[i].data.id = undefined
+                  // nodes[i].data.path = undefined
+                  // nodes[i].data.disable = undefined
+
+                  // // 自定义id 不同 子节点id也需要处理
+                  // nodes[i].data.created = (new Date()).valueOf()
                   minder.importNode(_node, nodes[i]);
+
+                  _node.data.id = guid()
+                  _node.data.created = (new Date()).valueOf()
+                  // 遍历子节点，给子节点都重新赋值id和created
+                  updateChildrenNodesId(_node)
+
                   _selectedNodes.push(_node);
                   node.appendChild(_node);
                 }
               });
+              console.log('_selectedNodes', _selectedNodes)
               minder.select(_selectedNodes, true);
               _selectedNodes = [];
 
@@ -198,6 +198,7 @@ define(function (require, exports, module) {
                 }
               });
             } else {
+              console.log('sNodes--复制', sNodes)
               sNodes.forEach(function (node) {
                 console.log('node', node)
                 minder.Text2Children(node, textData)

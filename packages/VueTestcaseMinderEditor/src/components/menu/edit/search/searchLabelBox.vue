@@ -15,18 +15,10 @@
     >
       <el-form-item label="用例级别">
         <el-checkbox-group v-model="formData.priority">
-          <el-checkbox :label="1">
-            P0
-          </el-checkbox>
-          <el-checkbox :label="2">
-            P1
-          </el-checkbox>
-          <el-checkbox :label="3">
-            P2
-          </el-checkbox>
-          <el-checkbox :label="4">
-            P3
-          </el-checkbox>
+          <el-checkbox :label="1"> P0 </el-checkbox>
+          <el-checkbox :label="2"> P1 </el-checkbox>
+          <el-checkbox :label="3"> P2 </el-checkbox>
+          <el-checkbox :label="4"> P3 </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
 
@@ -50,64 +42,66 @@
 </template>
 
 <script>
-  import {mapGetters} from 'vuex';
+import { mapGetters } from "vuex";
 
-  export default {
-    name: "searchLabelBox",
-    data() {
-      return {
-        reslove: null,
-        reject: null,
-        visible: false,
-        formData: {
-          priority: [],
-          sourceSelected: [],
-        },
-        sourceData: []
-      }
+export default {
+  name: "searchLabelBox",
+  data() {
+    return {
+      reslove: null,
+      reject: null,
+      visible: false,
+      formData: {
+        priority: [],
+        sourceSelected: [],
+      },
+      sourceData: [],
+    };
+  },
+  computed: {
+    ...mapGetters("caseEditorStore", {
+      minder: "getMinder",
+    }),
+  },
+  methods: {
+    openModal() {
+      this.visible = true;
+      this.initData();
+      return new Promise((resolve, reject) => {
+        this.resolve = resolve;
+        this.reject = reject;
+      });
     },
-    computed: {
-      ...mapGetters('caseEditorStore', {
-        'minder': 'getMinder',
-      }),
+    handleSubmit() {
+      this.resolve(this.formData);
+      this.visible = false;
     },
-    methods: {
-      openModal() {
-        this.visible = true;
-        this.initData();
-        return new Promise((resolve, reject) => {
-          this.resolve = resolve;
-          this.reject = reject;
-        });
-      },
-      handleSubmit() {
-        this.resolve(this.formData);
-        this.visible = false;
-      },
-      handleCancel() {
-        // 重置填写内容
-        this.initData();
-        this.visible = false;
-      },
-      handleClose(done) {
-        // 重置填写内容
-        this.initData();
-        done();
-      },
-      initData() {
-        this.formData = {
-          priority: [],
-          sourceSelected: []
-        }
-        const sourceData = this.minder.getUsedResource().map(function (resourceName) {
+    handleCancel() {
+      // 重置填写内容
+      this.initData();
+      this.visible = false;
+    },
+    handleClose(done) {
+      // 重置填写内容
+      this.initData();
+      done();
+    },
+    initData() {
+      this.formData = {
+        priority: [],
+        sourceSelected: [],
+      };
+      const sourceData = this.minder
+        .getUsedResource()
+        .map(function (resourceName) {
           return {
             name: resourceName,
-          }
+          };
         });
-        this.sourceData = sourceData;
-      }
-    }
-  }
+      this.sourceData = sourceData;
+    },
+  },
+};
 </script>
 
 

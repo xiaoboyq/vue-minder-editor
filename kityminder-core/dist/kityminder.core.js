@@ -1,9 +1,9 @@
 /*!
  * ====================================================
- * Kity Minder Core - v1.4.50 - 2021-03-02
+ * Kity Minder Core - v1.4.50 - 2022-12-23
  * https://github.com/fex-team/kityminder-core
  * GitHub: https://github.com/fex-team/kityminder-core.git 
- * Copyright (c) 2021 Baidu FEX; Licensed BSD-3-Clause
+ * Copyright (c) 2022 Baidu FEX; Licensed BSD-3-Clause
  * ====================================================
  */
 
@@ -832,7 +832,10 @@ _p[12] = {
                     return;
                 }
                 var children = [], jsonMap = {}, level = 0;
-                var LINE_SPLITTER = /\r|\n|\r\n/, TAB_REGEXP = /^(\t|\x20{4})/;
+                // 对换行的数据进行兼容
+                // var LINE_SPLITTER = /\r|\n|\r\n/,
+                //    TAB_REGEXP = /^(\t|\x20{4})/;
+                var LINE_SPLITTER = /\r|\r\n/, TAB_REGEXP = /^(\n\t|\t|\x20{4})/;
                 var lines = text.split(LINE_SPLITTER), line = "", jsonNode, i = 0;
                 var minder = this;
                 function isEmpty(line) {
@@ -841,7 +844,8 @@ _p[12] = {
                 function getNode(line) {
                     return {
                         data: {
-                            text: line.replace(/^(\t|\x20{4})+/, "").replace(/(\t|\x20{4})+$/, "")
+                            // text: line.replace(/^(\t|\x20{4})+/, '').replace(/(\t|\x20{4})+$/, '')
+                            text: line.replace(/^(\n\t|\x20{4})+/, "").replace(/(\t|\x20{4})+$/, "")
                         },
                         children: []
                     };
@@ -857,10 +861,35 @@ _p[12] = {
                 function addChild(parent, node) {
                     parent.children.push(node);
                 }
+                // for (var i = nodes.length - 1; i >= 0; i--) {
+                //   _node = minder.createNode(null, node);
+                //   minder.importNode(_node, nodes[i]);
+                //   _selectedNodes.push(_node);
+                //   node.appendChild(_node);
+                // }
+                var guid = function() {
+                    // 出处：https://www.codenong.com/cs106429627/
+                    return "xxxxxx-x4xxx".replace(/[xy]/g, function(c) {
+                        var r = Math.random() * 16 | 0;
+                        var v = c === "x" ? r : r & 3 | 8;
+                        return v.toString(16);
+                    });
+                };
                 function importChildren(node, children) {
                     for (var i = 0, l = children.length; i < l; i++) {
                         var childNode = minder.createNode(null, node);
                         childNode.setData("text", children[i].data.text || "");
+                        // console.log('childNode', childNode)
+                        // childNode.data.id = null;
+                        childNode.data.loaded = true;
+                        childNode.data.contextChanged = true;
+                        childNode.data.changed = true;
+                        childNode.data.id = guid();
+                        // console.log('childNode', childNode)
+                        // if(children[i].children && children[i].children.length) {
+                        //     childNode.expandState = "collapse"
+                        // }
+                        // resetNodes(childNode);
                         importChildren(childNode, children[i].children);
                     }
                 }
@@ -3838,45 +3867,47 @@ _p[35] = {
         _p.r(42);
         _p.r(43);
         _p.r(44);
-        _p.r(45);
         _p.r(46);
         _p.r(47);
         _p.r(48);
-        _p.r(50);
         _p.r(49);
         _p.r(51);
+        _p.r(50);
         _p.r(52);
         _p.r(53);
         _p.r(54);
         _p.r(55);
         _p.r(56);
+        _p.r(57);
         // 因为用例结果 result 需要占用 progress key 。为避免冲突，先注释掉。
-        // _p.r(57);
-        _p.r(58);
-        _p.r(59);
+        // _p.r(58);
         _p.r(60);
+        _p.r(59);
+        _p.r(45);
         _p.r(61);
         _p.r(62);
         _p.r(63);
         _p.r(64);
         _p.r(65);
-        _p.r(69);
         _p.r(66);
-        _p.r(68);
         _p.r(67);
+        _p.r(71);
+        _p.r(68);
+        _p.r(70);
+        _p.r(69);
         _p.r(40);
         _p.r(36);
         _p.r(37);
         _p.r(38);
         _p.r(39);
         _p.r(41);
-        _p.r(76);
-        _p.r(79);
         _p.r(78);
-        _p.r(77);
-        _p.r(79);
         _p.r(81);
         _p.r(80);
+        _p.r(79);
+        _p.r(81);
+        _p.r(83);
+        _p.r(82);
         _p.r(0);
         _p.r(1);
         _p.r(2);
@@ -3884,12 +3915,12 @@ _p[35] = {
         _p.r(4);
         _p.r(5);
         _p.r(6);
-        _p.r(70);
-        _p.r(74);
-        _p.r(71);
-        _p.r(73);
         _p.r(72);
+        _p.r(76);
+        _p.r(73);
         _p.r(75);
+        _p.r(74);
+        _p.r(77);
         module.exports = kityminder;
     }
 };
@@ -4481,7 +4512,7 @@ _p[43] = {
         var MinderNode = _p.r(21);
         var Command = _p.r(9);
         var Module = _p.r(20);
-        var TextRenderer = _p.r(62);
+        var TextRenderer = _p.r(64);
         Module.register("basestylemodule", function() {
             var km = this;
             function getNodeDataOrStyle(node, name) {
@@ -4736,8 +4767,346 @@ _p[44] = {
     }
 };
 
-//src/module/dragtree.js
+//src/module/custom.js
 _p[45] = {
+    value: function(require, exports, module) {
+        var kity = _p.r(17);
+        var utils = _p.r(33);
+        var Minder = _p.r(19);
+        var MinderNode = _p.r(21);
+        var Command = _p.r(9);
+        var Module = _p.r(20);
+        var Renderer = _p.r(27);
+        Module.register("Custom", function() {
+            // String Hash
+            // https://github.com/drostie/sha3-js/edit/master/blake32.min.js
+            var blake32 = function() {
+                var k, g, r, l, m, o, p, q, t, w, x;
+                x = 4 * (1 << 30);
+                k = [ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 ];
+                m = [ 608135816, 2242054355, 320440878, 57701188, 2752067618, 698298832, 137296536, 3964562569, 1160258022, 953160567, 3193202383, 887688300, 3232508343, 3380367581, 1065670069, 3041331479 ];
+                w = function(i) {
+                    if (i < 0) {
+                        i += x;
+                    }
+                    return ("00000000" + i.toString(16)).slice(-8);
+                };
+                o = [ [ 16, 50, 84, 118, 152, 186, 220, 254 ], [ 174, 132, 249, 109, 193, 32, 123, 53 ], [ 139, 12, 37, 223, 234, 99, 23, 73 ], [ 151, 19, 205, 235, 98, 165, 4, 143 ], [ 9, 117, 66, 250, 30, 203, 134, 211 ], [ 194, 166, 176, 56, 212, 87, 239, 145 ], [ 92, 241, 222, 164, 112, 54, 41, 184 ], [ 189, 231, 28, 147, 5, 79, 104, 162 ], [ 246, 158, 59, 128, 44, 125, 65, 90 ], [ 42, 72, 103, 81, 191, 233, 195, 13 ] ];
+                p = function(a, b, n) {
+                    var s = q[a] ^ q[b];
+                    q[a] = s >>> n | s << 32 - n;
+                };
+                g = function(i, a, b, c, d) {
+                    var u = l + o[r][i] % 16, v = l + (o[r][i] >> 4);
+                    a %= 4;
+                    b = 4 + b % 4;
+                    c = 8 + c % 4;
+                    d = 12 + d % 4;
+                    q[a] += q[b] + (t[u] ^ m[v % 16]);
+                    p(d, a, 16);
+                    q[c] += q[d];
+                    p(b, c, 12);
+                    q[a] += q[b] + (t[v] ^ m[u % 16]);
+                    p(d, a, 8);
+                    q[c] += q[d];
+                    p(b, c, 7);
+                };
+                return function(a, b) {
+                    if (!(b instanceof Array && b.length === 4)) {
+                        b = [ 0, 0, 0, 0 ];
+                    }
+                    var c, d, e, L, f, h, j, i;
+                    d = k.slice(0);
+                    c = m.slice(0, 8);
+                    for (r = 0; r < 4; r += 1) {
+                        c[r] ^= b[r];
+                    }
+                    e = a.length * 16;
+                    f = e % 512 > 446 || e % 512 === 0 ? 0 : e;
+                    if (e % 512 === 432) {
+                        a += "老";
+                    } else {
+                        a += "耀";
+                        while (a.length % 32 !== 27) {
+                            a += "\0";
+                        }
+                        a += "";
+                    }
+                    t = [];
+                    for (i = 0; i < a.length; i += 2) {
+                        t.push(a.charCodeAt(i) * 65536 + a.charCodeAt(i + 1));
+                    }
+                    t.push(0);
+                    t.push(e);
+                    h = t.length - 16;
+                    j = 0;
+                    for (l = 0; l < t.length; l += 16) {
+                        j += 512;
+                        L = l === h ? f : Math.min(e, j);
+                        q = d.concat(c);
+                        q[12] ^= L;
+                        q[13] ^= L;
+                        for (r = 0; r < 10; r += 1) {
+                            for (i = 0; i < 8; i += 1) {
+                                if (i < 4) {
+                                    g(i, i, i, i, i);
+                                } else {
+                                    g(i, i, i + 1, i + 2, i + 3);
+                                }
+                            }
+                        }
+                        for (i = 0; i < 8; i += 1) {
+                            d[i] ^= b[i % 4] ^ q[i] ^ q[i + 8];
+                        }
+                    }
+                    return d.map(w).join("");
+                };
+            }();
+            /**
+         * 自动使用的颜色序列
+         * 250
+         */
+            //  303  190 137
+            // var RESOURCE_COLOR_SERIES = [51, 303, 190, 137, 0, 92].map(function(h) {
+            //     return kity.Color.createHSL(h, 200, 205);
+            // });
+            var RESOURCE_COLOR_SERIES = [ 51, 303, 75, 200, 157, 0, 26, 254, 190 ].map(function(h) {
+                return kity.Color.createHSL(h, 140, 65);
+            });
+            /**
+         * 在 Minder 上拓展一些关于资源的支持接口
+         */
+            kity.extendClass(Minder, {
+                /**
+             * 获取字符串的哈希值
+             *
+             * @param {String} str
+             * @return {Number} hashCode
+             */
+                getHashCode: function(str) {
+                    str = blake32(str);
+                    var hash = 1315423911, i, ch;
+                    for (i = str.length - 1; i >= 0; i--) {
+                        ch = str.charCodeAt(i);
+                        hash ^= (hash << 5) + ch + (hash >> 2);
+                    }
+                    return hash & 2059403263;
+                },
+                /**
+             * 获取脑图中某个资源对应的颜色
+             *
+             * 如果存在同名资源，则返回已经分配给该资源的颜色，否则分配给该资源一个颜色，并且返回
+             *
+             * 如果资源数超过颜色序列数量，返回哈希颜色
+             *
+             * @param {String} custom 资源名称
+             * @return {Color}
+             */
+                getCustomColor: function(custom) {
+                    const customName = custom.split("：")[1] || "xx";
+                    var colorMapping = this._getCustomColorIndexMapping();
+                    var nextIndex;
+                    if (!Object.prototype.hasOwnProperty.call(colorMapping, customName)) {
+                        // 找不到找下个可用索引
+                        nextIndex = this._getNextCustomColorIndex();
+                        colorMapping[customName] = nextIndex;
+                    }
+                    // 资源过多，找不到可用索引颜色，统一返回哈希函数得到的颜色
+                    //  RESOURCE_COLOR_SERIES[colorMapping[customName]] ||
+                    return RESOURCE_COLOR_SERIES[colorMapping[customName]] || kity.Color.createHSL(Math.floor(this.getHashCode(customName) / 2147483647 * 359), 200, 185);
+                },
+                /**
+             * 获得已使用的资源的列表
+             *
+             * @return {Array}
+             */
+                getUsedCustom: function() {
+                    var mapping = this._getCustomColorIndexMapping();
+                    var used = [], custom;
+                    for (custom in mapping) {
+                        if (Object.prototype.hasOwnProperty.call(mapping, custom)) {
+                            used.push(custom);
+                        }
+                    }
+                    return used;
+                },
+                /**
+             * 获取脑图下一个可用的资源颜色索引
+             *
+             * @return {int}
+             */
+                _getNextCustomColorIndex: function() {
+                    // 获取现有颜色映射
+                    //     custom => color_index
+                    var colorMapping = this._getCustomColorIndexMapping();
+                    var custom, used, i;
+                    used = [];
+                    // 抽取已经使用的值到 used 数组
+                    for (custom in colorMapping) {
+                        if (Object.prototype.hasOwnProperty.call(colorMapping, custom)) {
+                            used.push(colorMapping[custom]);
+                        }
+                    }
+                    // 枚举所有的可用值，如果还没被使用，返回
+                    for (i = 0; i < RESOURCE_COLOR_SERIES.length; i++) {
+                        if (!~used.indexOf(i)) return i;
+                    }
+                    // 没有可用的颜色了
+                    return -1;
+                },
+                // 获取现有颜色映射
+                //     custom => color_index
+                _getCustomColorIndexMapping: function() {
+                    return this._customColorMapping || (this._customColorMapping = {});
+                }
+            });
+            /**
+         * @class 设置资源的命令
+         *
+         * @example
+         *
+         * // 设置选中节点资源为 "张三"
+         * minder.execCommand('custom', ['张三']);
+         *
+         * // 添加资源 "李四" 到选中节点
+         * var custom = minder.queryCommandValue();
+         * custom.push('李四');
+         * minder.execCommand('custom', custom);
+         *
+         * // 清除选中节点的资源
+         * minder.execCommand('custom', null);
+         */
+            var CustomCommand = kity.createClass("CustomCommand", {
+                base: Command,
+                execute: function(minder, custom) {
+                    var nodes = minder.getSelectedNodes();
+                    if (typeof custom == "string") {
+                        custom = [ custom ];
+                    }
+                    nodes.forEach(function(node) {
+                        node.setData("custom", custom).render();
+                    });
+                    minder.layout(200);
+                },
+                queryValue: function(minder) {
+                    var nodes = minder.getSelectedNodes();
+                    var custom = [];
+                    nodes.forEach(function(node) {
+                        var nodeCustom = node.getData("custom");
+                        if (!nodeCustom) return;
+                        nodeCustom.forEach(function(name) {
+                            if (!~custom.indexOf(name)) {
+                                custom.push(name);
+                            }
+                        });
+                    });
+                    return custom;
+                },
+                queryState: function(km) {
+                    return km.getSelectedNode() ? 0 : -1;
+                }
+            });
+            /**
+         * @class 资源的覆盖图形
+         *
+         * 该类为一个资源以指定的颜色渲染一个动态的覆盖图形
+         */
+            var CustomOverlay = kity.createClass("CustomOverlay", {
+                base: kity.Group,
+                constructor: function() {
+                    this.callBase();
+                    var text, rect;
+                    rect = this.rect = new kity.Rect().setRadius(4);
+                    text = this.text = new kity.Text().setFontSize(12).setVerticalAlign("middle");
+                    this.addShapes([ rect, text ]);
+                },
+                setValue: function(customName, color) {
+                    var paddingX = 8, paddingY = 4, borderRadius = 4;
+                    var text, box, rect;
+                    text = this.text;
+                    if (customName == this.lastCustomName) {
+                        box = this.lastBox;
+                    } else {
+                        var contentText = customName ? customName.split("：")[1] : "";
+                        text.setContent(contentText);
+                        box = text.getBoundaryBox();
+                        this.lastCustomName = customName;
+                        this.lastBox = box;
+                    }
+                    text.setX(paddingX).fill(color.dec("l", 70));
+                    rect = this.rect;
+                    rect.setPosition(0, box.y - paddingY);
+                    this.width = Math.round(box.width + paddingX * 2);
+                    this.height = Math.round(box.height + paddingY * 2);
+                    rect.setSize(this.width, this.height);
+                    rect.fill(color);
+                }
+            });
+            /**
+         * @class 资源渲染器
+         */
+            var CustomRenderer = kity.createClass("CustomRenderer", {
+                base: Renderer,
+                create: function(node) {
+                    this.overlays = [];
+                    return new kity.Group();
+                },
+                shouldRender: function(node) {
+                    return node.getData("custom") && node.getData("custom").length;
+                },
+                update: function(container, node, box) {
+                    var spaceRight = node.getStyle("space-right");
+                    var overlays = this.overlays;
+                    /*  修复 custom 数组中出现 null 的 bug
+                 *  @Author zhangbobell
+                 *  @date 2016-01-15
+                 */
+                    var custom = node.getData("custom").filter(function(ele) {
+                        return ele !== null;
+                    });
+                    if (custom.length === 0) {
+                        return;
+                    }
+                    var minder = node.getMinder();
+                    var i, overlay, x;
+                    x = 0;
+                    for (i = 0; i < custom.length; i++) {
+                        x += spaceRight;
+                        overlay = overlays[i];
+                        if (!overlay) {
+                            overlay = new CustomOverlay();
+                            overlays.push(overlay);
+                            container.addShape(overlay);
+                        }
+                        overlay.setVisible(true);
+                        overlay.setValue(custom[i], minder.getCustomColor(custom[i]));
+                        overlay.setTranslate(x, -1);
+                        x += overlay.width;
+                    }
+                    while (overlay = overlays[i++]) overlay.setVisible(false);
+                    container.setTranslate(box.right, 0);
+                    return new kity.Box({
+                        x: box.right,
+                        y: Math.round(-overlays[0].height / 2),
+                        width: x,
+                        height: overlays[0].height
+                    });
+                }
+            });
+            return {
+                commands: {
+                    custom: CustomCommand
+                },
+                renderers: {
+                    right: CustomRenderer
+                }
+            };
+        });
+    }
+};
+
+//src/module/dragtree.js
+_p[46] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -5078,7 +5447,7 @@ _p[45] = {
 };
 
 //src/module/expand.js
-_p[46] = {
+_p[47] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -5344,7 +5713,7 @@ _p[46] = {
 };
 
 //src/module/font.js
-_p[47] = {
+_p[48] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -5352,7 +5721,7 @@ _p[47] = {
         var MinderNode = _p.r(21);
         var Command = _p.r(9);
         var Module = _p.r(20);
-        var TextRenderer = _p.r(62);
+        var TextRenderer = _p.r(64);
         function getNodeDataOrStyle(node, name) {
             return node.getData(name) || node.getStyle(name);
         }
@@ -5491,7 +5860,7 @@ _p[47] = {
 };
 
 //src/module/hyperlink.js
-_p[48] = {
+_p[49] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -5603,7 +5972,7 @@ _p[48] = {
 };
 
 //src/module/image-viewer.js
-_p[49] = {
+_p[50] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var keymap = _p.r(15);
@@ -5708,7 +6077,7 @@ _p[49] = {
 };
 
 //src/module/image.js
-_p[50] = {
+_p[51] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -5830,7 +6199,7 @@ _p[50] = {
 };
 
 //src/module/keynav.js
-_p[51] = {
+_p[52] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -5985,7 +6354,7 @@ _p[51] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[52] = {
+_p[53] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var Command = _p.r(9);
@@ -6060,7 +6429,7 @@ _p[52] = {
 };
 
 //src/module/node.js
-_p[53] = {
+_p[54] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6210,7 +6579,7 @@ _p[53] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[54] = {
+_p[55] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6255,7 +6624,7 @@ _p[54] = {
                     this.path = new kity.Path().setPathData(NOTE_PATH).setTranslate(2.5, -6.5);
                     this.addShapes([ this.rect, this.path ]);
                     this.on("mouseover", function() {
-                        this.rect.fill("rgba(255, 255, 200, .8)");
+                        this.rect.fill("rgba(62, 123, 191,0.4)");
                     }).on("mouseout", function() {
                         this.rect.fill("transparent");
                     });
@@ -6266,22 +6635,24 @@ _p[54] = {
                 base: Renderer,
                 create: function(node) {
                     var icon = new NoteIcon();
-                    icon.on("mousedown", function(e) {
-                        e.preventDefault();
-                        node.getMinder().fire("editnoterequest");
-                    });
-                    icon.on("mouseover", function() {
+                    // icon.on('mousedown', function(e) {
+                    //     e.preventDefault();
+                    //     node.getMinder().fire('editnoterequest');
+                    // });
+                    icon.on("click", function() {
                         node.getMinder().fire("shownoterequest", {
                             node: node,
                             icon: icon
                         });
                     });
-                    icon.on("mouseout", function() {
-                        node.getMinder().fire("hidenoterequest", {
-                            node: node,
-                            icon: icon
-                        });
-                    });
+                    // icon.on('click', function(e) {
+                    //     console.log('node', node)
+                    //     e.preventDefault();
+                    //     e.stopPropagation()
+                    // })
+                    // icon.on('mouseout', function() {
+                    //     node.getMinder().fire('hidenoterequest', {node: node, icon: icon});
+                    // });
                     return icon;
                 },
                 shouldRender: function(node) {
@@ -6308,7 +6679,7 @@ _p[54] = {
 };
 
 //src/module/outline.js
-_p[55] = {
+_p[56] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6425,7 +6796,7 @@ _p[55] = {
 };
 
 //src/module/priority.js
-_p[56] = {
+_p[57] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6561,7 +6932,7 @@ _p[56] = {
 
 //src/module/progress.js
 // 因为 result 需要占用 Progress 这个 key ，所以原有 progress 先注释掉，避免冲突
-_p[57] = {
+_p[58] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -6685,8 +7056,338 @@ _p[57] = {
     }
 };
 
+//src/module/question.js
+_p[59] = {
+    value: function(require, exports, module) {
+        var kity = _p.r(17);
+        var utils = _p.r(33);
+        var Minder = _p.r(19);
+        var MinderNode = _p.r(21);
+        var Command = _p.r(9);
+        var Module = _p.r(20);
+        var Renderer = _p.r(27);
+        Module.register("Question", function() {
+            // String Hash
+            // https://github.com/drostie/sha3-js/edit/master/blake32.min.js
+            var blake32 = function() {
+                var k, g, r, l, m, o, p, q, t, w, x;
+                x = 4 * (1 << 30);
+                k = [ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 ];
+                m = [ 608135816, 2242054355, 320440878, 57701188, 2752067618, 698298832, 137296536, 3964562569, 1160258022, 953160567, 3193202383, 887688300, 3232508343, 3380367581, 1065670069, 3041331479 ];
+                w = function(i) {
+                    if (i < 0) {
+                        i += x;
+                    }
+                    return ("00000000" + i.toString(16)).slice(-8);
+                };
+                o = [ [ 16, 50, 84, 118, 152, 186, 220, 254 ], [ 174, 132, 249, 109, 193, 32, 123, 53 ], [ 139, 12, 37, 223, 234, 99, 23, 73 ], [ 151, 19, 205, 235, 98, 165, 4, 143 ], [ 9, 117, 66, 250, 30, 203, 134, 211 ], [ 194, 166, 176, 56, 212, 87, 239, 145 ], [ 92, 241, 222, 164, 112, 54, 41, 184 ], [ 189, 231, 28, 147, 5, 79, 104, 162 ], [ 246, 158, 59, 128, 44, 125, 65, 90 ], [ 42, 72, 103, 81, 191, 233, 195, 13 ] ];
+                p = function(a, b, n) {
+                    var s = q[a] ^ q[b];
+                    q[a] = s >>> n | s << 32 - n;
+                };
+                g = function(i, a, b, c, d) {
+                    var u = l + o[r][i] % 16, v = l + (o[r][i] >> 4);
+                    a %= 4;
+                    b = 4 + b % 4;
+                    c = 8 + c % 4;
+                    d = 12 + d % 4;
+                    q[a] += q[b] + (t[u] ^ m[v % 16]);
+                    p(d, a, 16);
+                    q[c] += q[d];
+                    p(b, c, 12);
+                    q[a] += q[b] + (t[v] ^ m[u % 16]);
+                    p(d, a, 8);
+                    q[c] += q[d];
+                    p(b, c, 7);
+                };
+                return function(a, b) {
+                    if (!(b instanceof Array && b.length === 4)) {
+                        b = [ 0, 0, 0, 0 ];
+                    }
+                    var c, d, e, L, f, h, j, i;
+                    d = k.slice(0);
+                    c = m.slice(0, 8);
+                    for (r = 0; r < 4; r += 1) {
+                        c[r] ^= b[r];
+                    }
+                    e = a.length * 16;
+                    f = e % 512 > 446 || e % 512 === 0 ? 0 : e;
+                    if (e % 512 === 432) {
+                        a += "老";
+                    } else {
+                        a += "耀";
+                        while (a.length % 32 !== 27) {
+                            a += "\0";
+                        }
+                        a += "";
+                    }
+                    t = [];
+                    for (i = 0; i < a.length; i += 2) {
+                        t.push(a.charCodeAt(i) * 65536 + a.charCodeAt(i + 1));
+                    }
+                    t.push(0);
+                    t.push(e);
+                    h = t.length - 16;
+                    j = 0;
+                    for (l = 0; l < t.length; l += 16) {
+                        j += 512;
+                        L = l === h ? f : Math.min(e, j);
+                        q = d.concat(c);
+                        q[12] ^= L;
+                        q[13] ^= L;
+                        for (r = 0; r < 10; r += 1) {
+                            for (i = 0; i < 8; i += 1) {
+                                if (i < 4) {
+                                    g(i, i, i, i, i);
+                                } else {
+                                    g(i, i, i + 1, i + 2, i + 3);
+                                }
+                            }
+                        }
+                        for (i = 0; i < 8; i += 1) {
+                            d[i] ^= b[i % 4] ^ q[i] ^ q[i + 8];
+                        }
+                    }
+                    return d.map(w).join("");
+                };
+            }();
+            /**
+         * 自动使用的颜色序列
+         */
+            var RESOURCE_COLOR_SERIES = [ 51, 303, 75, 200, 157, 0, 26, 254 ].map(function(h) {
+                return kity.Color.createHSL(h, 200, 185);
+            });
+            /**
+         * 在 Minder 上拓展一些关于资源的支持接口
+         */
+            kity.extendClass(Minder, {
+                /**
+             * 获取字符串的哈希值
+             *
+             * @param {String} str
+             * @return {Number} hashCode
+             */
+                getHashCode: function(str) {
+                    str = blake32(str);
+                    var hash = 1315423911, i, ch;
+                    for (i = str.length - 1; i >= 0; i--) {
+                        ch = str.charCodeAt(i);
+                        hash ^= (hash << 5) + ch + (hash >> 2);
+                    }
+                    return hash & 2059403263;
+                },
+                /**
+             * 获取脑图中某个资源对应的颜色
+             *
+             * 如果存在同名资源，则返回已经分配给该资源的颜色，否则分配给该资源一个颜色，并且返回
+             *
+             * 如果资源数超过颜色序列数量，返回哈希颜色
+             *
+             * @param {String} question 资源名称
+             * @return {Color}
+             */
+                getQuestionColor: function(question) {
+                    var colorMapping = this._getQuestionColorIndexMapping();
+                    var nextIndex;
+                    if (!Object.prototype.hasOwnProperty.call(colorMapping, question)) {
+                        // 找不到找下个可用索引
+                        nextIndex = this._getNextQuestionColorIndex();
+                        colorMapping[question] = nextIndex;
+                    }
+                    // 资源过多，找不到可用索引颜色，统一返回哈希函数得到的颜色
+                    return RESOURCE_COLOR_SERIES[colorMapping[question]] || kity.Color.createHSL(Math.floor(this.getHashCode(question) / 2147483647 * 359), 200, 185);
+                },
+                /**
+             * 获得已使用的资源的列表
+             *
+             * @return {Array}
+             */
+                getUsedQuestion: function() {
+                    var mapping = this._getQuestionColorIndexMapping();
+                    var used = [], question;
+                    for (question in mapping) {
+                        if (Object.prototype.hasOwnProperty.call(mapping, question)) {
+                            used.push(question);
+                        }
+                    }
+                    return used;
+                },
+                /**
+             * 获取脑图下一个可用的资源颜色索引
+             *
+             * @return {int}
+             */
+                _getNextQuestionColorIndex: function() {
+                    // 获取现有颜色映射
+                    //     question => color_index
+                    var colorMapping = this._getQuestionColorIndexMapping();
+                    var question, used, i;
+                    used = [];
+                    // 抽取已经使用的值到 used 数组
+                    for (question in colorMapping) {
+                        if (Object.prototype.hasOwnProperty.call(colorMapping, question)) {
+                            used.push(colorMapping[question]);
+                        }
+                    }
+                    // 枚举所有的可用值，如果还没被使用，返回
+                    for (i = 0; i < RESOURCE_COLOR_SERIES.length; i++) {
+                        if (!~used.indexOf(i)) return i;
+                    }
+                    // 没有可用的颜色了
+                    return -1;
+                },
+                // 获取现有颜色映射
+                //     question => color_index
+                _getQuestionColorIndexMapping: function() {
+                    return this._questionColorMapping || (this._questionColorMapping = {});
+                }
+            });
+            /**
+         * @class 设置资源的命令
+         *
+         * @example
+         *
+         * // 设置选中节点资源为 "张三"
+         * minder.execCommand('question', ['张三']);
+         *
+         * // 添加资源 "李四" 到选中节点
+         * var question = minder.queryCommandValue();
+         * question.push('李四');
+         * minder.execCommand('question', question);
+         *
+         * // 清除选中节点的资源
+         * minder.execCommand('question', null);
+         */
+            var QuestionCommand = kity.createClass("QuestionCommand", {
+                base: Command,
+                execute: function(minder, question) {
+                    var nodes = minder.getSelectedNodes();
+                    if (typeof question == "string") {
+                        question = [ question ];
+                    }
+                    nodes.forEach(function(node) {
+                        node.setData("question", question).render();
+                    });
+                    minder.layout(200);
+                },
+                queryValue: function(minder) {
+                    var nodes = minder.getSelectedNodes();
+                    var question = [];
+                    nodes.forEach(function(node) {
+                        var nodeQuestion = node.getData("question");
+                        if (!nodeQuestion) return;
+                        nodeQuestion.forEach(function(name) {
+                            if (!~question.indexOf(name)) {
+                                question.push(name);
+                            }
+                        });
+                    });
+                    return question;
+                },
+                queryState: function(km) {
+                    return km.getSelectedNode() ? 0 : -1;
+                }
+            });
+            /**
+         * @class 资源的覆盖图形
+         *
+         * 该类为一个资源以指定的颜色渲染一个动态的覆盖图形
+         */
+            var QuestionOverlay = kity.createClass("QuestionOverlay", {
+                base: kity.Group,
+                constructor: function() {
+                    this.callBase();
+                    var text, rect;
+                    rect = this.rect = new kity.Rect().setRadius(4);
+                    text = this.text = new kity.Text().setFontSize(12).setVerticalAlign("middle");
+                    this.addShapes([ rect, text ]);
+                },
+                setValue: function(questionName, color) {
+                    var paddingX = 8, paddingY = 4, borderRadius = 4;
+                    var text, box, rect;
+                    text = this.text;
+                    if (questionName == this.lastQuestionName) {
+                        box = this.lastBox;
+                    } else {
+                        text.setContent(questionName);
+                        box = text.getBoundaryBox();
+                        this.lastQuestionName = questionName;
+                        this.lastBox = box;
+                    }
+                    text.setX(paddingX).fill(color.dec("l", 70));
+                    rect = this.rect;
+                    rect.setPosition(0, box.y - paddingY);
+                    this.width = Math.round(box.width + paddingX * 2);
+                    this.height = Math.round(box.height + paddingY * 2);
+                    rect.setSize(this.width, this.height);
+                    rect.fill(color);
+                }
+            });
+            /**
+         * @class 资源渲染器
+         */
+            var QuestionRenderer = kity.createClass("QuestionRenderer", {
+                base: Renderer,
+                create: function(node) {
+                    this.overlays = [];
+                    return new kity.Group();
+                },
+                shouldRender: function(node) {
+                    return node.getData("question") && node.getData("question").length;
+                },
+                update: function(container, node, box) {
+                    var spaceRight = node.getStyle("space-right");
+                    var overlays = this.overlays;
+                    /*  修复 question 数组中出现 null 的 bug
+                 *  @Author zhangbobell
+                 *  @date 2016-01-15
+                 */
+                    var question = node.getData("question").filter(function(ele) {
+                        return ele !== null;
+                    });
+                    if (question.length === 0) {
+                        return;
+                    }
+                    var minder = node.getMinder();
+                    var i, overlay, x;
+                    x = 0;
+                    for (i = 0; i < question.length; i++) {
+                        x += spaceRight;
+                        overlay = overlays[i];
+                        if (!overlay) {
+                            overlay = new QuestionOverlay();
+                            overlays.push(overlay);
+                            container.addShape(overlay);
+                        }
+                        overlay.setVisible(true);
+                        overlay.setValue(question[i], minder.getQuestionColor(question[i]));
+                        overlay.setTranslate(x, -1);
+                        x += overlay.width;
+                    }
+                    while (overlay = overlays[i++]) overlay.setVisible(false);
+                    container.setTranslate(box.right, 0);
+                    return new kity.Box({
+                        x: box.right,
+                        y: Math.round(-overlays[0].height / 2),
+                        width: x,
+                        height: overlays[0].height
+                    });
+                }
+            });
+            return {
+                commands: {
+                    question: QuestionCommand
+                },
+                renderers: {
+                    right: QuestionRenderer
+                }
+            };
+        });
+    }
+};
+
 //src/module/resource.js
-_p[58] = {
+_p[60] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7016,7 +7717,7 @@ _p[58] = {
 };
 
 //src/module/result.js
-_p[59] = {
+_p[61] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7027,8 +7728,8 @@ _p[59] = {
         var Renderer = _p.r(27);
         Module.register("ResultModule", function() {
             var minder = this;
-            // FIXME: 超级大坑，滴滴AgileTC用了 progress 记录测试结果，为了兼容这里只能继续用。
-            var RESULT_DATA = "progress";
+            // FIXME: 超级大坑，滴滴AgileTC用了 result 记录测试结果，为了兼容这里只能继续用。
+            var RESULT_DATA = "result";
             var DEFAULT_BACKGROUND = "#43BC00";
             var PASS_VALUE = 9;
             var FAIL_VALUE = 1;
@@ -7040,8 +7741,6 @@ _p[59] = {
                 g.addStop(0, "#fff");
                 g.addStop(1, "#ccc");
             });
-            //
-            // minder.getPaper().addResource(FRAME_GRAD);
             // 进度图标的图形
             var ResultIcon = kity.createClass("ResultIcon", {
                 base: kity.Group,
@@ -7050,7 +7749,7 @@ _p[59] = {
                     this.setSize(20);
                     this.create();
                     this.setValue(value);
-                    this.setId(utils.uuid("node_progress"));
+                    this.setId(utils.uuid("node_result"));
                     this.translate(.5, .5);
                 },
                 setSize: function(size) {
@@ -7071,7 +7770,8 @@ _p[59] = {
                     this.skip = skip;
                 },
                 setValue: function(value) {
-                    SKIP_VALUE !== value ? this.pie.setAngle(-360 * (value - 1) / 8).fill(DEFAULT_BACKGROUND) : this.pie.setAngle(360).fill("#fff");
+                    value && value.length && value.indexOf(SKIP_VALUE) > -1 || value === SKIP_VALUE ? this.pie.setAngle(360).fill("#fff") : this.pie.setAngle(-360 * (value - 1) / 8).fill(DEFAULT_BACKGROUND);
+                    // this.pie.setAngle(360).fill("#fff")
                     this.check.setVisible(PASS_VALUE == value);
                     this.fail.setVisible(FAIL_VALUE == value);
                     this.block.setVisible(BLOCK_VALUE == value);
@@ -7163,7 +7863,7 @@ _p[59] = {
 };
 
 //src/module/select.js
-_p[60] = {
+_p[62] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7308,7 +8008,7 @@ _p[60] = {
 };
 
 //src/module/style.js
-_p[61] = {
+_p[63] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7413,7 +8113,7 @@ _p[61] = {
 };
 
 //src/module/text.js
-_p[62] = {
+_p[64] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7482,7 +8182,7 @@ _p[62] = {
                     "impact,chicago": -.13,
                     "times new roman": -.1,
                     "arial black,avant garde": -.17,
-                    default: 0
+                    default: -.14
                 },
                 Win: {
                     "微软雅黑,Microsoft YaHei": -.15,
@@ -7574,7 +8274,7 @@ _p[62] = {
                     // 猎豹浏览器的ie内核兼容性模式下
                     adjust = .9;
                 }
-                textGroup.setTranslate(0, (adjust || 0) * fontSize);
+                textGroup.setTranslate(0, (adjust || .4) * fontSize);
                 var rBox = new kity.Box(), r = Math.round;
                 this.setTextStyle(node, textGroup);
                 var textLength = textArr.length;
@@ -7667,7 +8367,7 @@ _p[62] = {
 };
 
 //src/module/view.js
-_p[63] = {
+_p[65] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -7989,7 +8689,7 @@ _p[63] = {
 };
 
 //src/module/zoom.js
-_p[64] = {
+_p[66] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var utils = _p.r(33);
@@ -8168,7 +8868,7 @@ _p[64] = {
 };
 
 //src/protocol/json.js
-_p[65] = {
+_p[67] = {
     value: function(require, exports, module) {
         var data = _p.r(12);
         data.registerProtocol("json", module.exports = {
@@ -8187,7 +8887,7 @@ _p[65] = {
 };
 
 //src/protocol/markdown.js
-_p[66] = {
+_p[68] = {
     value: function(require, exports, module) {
         var data = _p.r(12);
         var LINE_ENDING_SPLITER = /\r\n|\r|\n/;
@@ -8318,7 +9018,7 @@ _p[66] = {
 };
 
 //src/protocol/png.js
-_p[67] = {
+_p[69] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var data = _p.r(12);
@@ -8538,7 +9238,7 @@ _p[67] = {
 };
 
 //src/protocol/svg.js
-_p[68] = {
+_p[70] = {
     value: function(require, exports, module) {
         var data = _p.r(12);
         /**
@@ -8810,7 +9510,7 @@ _p[68] = {
 };
 
 //src/protocol/text.js
-_p[69] = {
+_p[71] = {
     value: function(require, exports, module) {
         var data = _p.r(12);
         var Browser = _p.r(17).Browser;
@@ -9041,7 +9741,7 @@ _p[69] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[70] = {
+_p[72] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("default", {
@@ -9075,7 +9775,7 @@ _p[70] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[71] = {
+_p[73] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("filetree", {
@@ -9103,7 +9803,7 @@ _p[71] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[72] = {
+_p[74] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("fish-bone", {
@@ -9145,7 +9845,7 @@ _p[72] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[73] = {
+_p[75] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("right", {
@@ -9169,7 +9869,7 @@ _p[73] = {
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-_p[74] = {
+_p[76] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("structure", {
@@ -9192,7 +9892,7 @@ _p[74] = {
  * @author: along
  * @copyright: bpd729@163.com, 2015
  */
-_p[75] = {
+_p[77] = {
     value: function(require, exports, module) {
         var template = _p.r(31);
         template.register("tianpan", {
@@ -9213,7 +9913,7 @@ _p[75] = {
 };
 
 //src/theme/default.js
-_p[76] = {
+_p[78] = {
     value: function(require, exports, module) {
         var theme = _p.r(32);
         [ "classic", "classic-compact" ].forEach(function(name) {
@@ -9272,7 +9972,7 @@ _p[76] = {
 };
 
 //src/theme/fish.js
-_p[77] = {
+_p[79] = {
     value: function(require, exports, module) {
         var theme = _p.r(32);
         theme.register("fish", {
@@ -9323,7 +10023,7 @@ _p[77] = {
 };
 
 //src/theme/fresh.js
-_p[78] = {
+_p[80] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
         var theme = _p.r(32);
@@ -9392,7 +10092,7 @@ _p[78] = {
 };
 
 //src/theme/snow.js
-_p[79] = {
+_p[81] = {
     value: function(require, exports, module) {
         var theme = _p.r(32);
         [ "snow", "snow-compact" ].forEach(function(name) {
@@ -9447,7 +10147,7 @@ _p[79] = {
 };
 
 //src/theme/tianpan.js
-_p[80] = {
+_p[82] = {
     value: function(require, exports, module) {
         var theme = _p.r(32);
         [ "tianpan", "tianpan-compact" ].forEach(function(name) {
@@ -9509,7 +10209,7 @@ _p[80] = {
 };
 
 //src/theme/wire.js
-_p[81] = {
+_p[83] = {
     value: function(require, exports, module) {
         var theme = _p.r(32);
         theme.register("wire", {

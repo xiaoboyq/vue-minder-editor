@@ -3,7 +3,6 @@ define(function (require, exports, module) {
   function ProgressRuntime() {
     var minder = this.minder;
     var hotbox = this.hotbox;
-
     var main = hotbox.state('main');
 
     main.button({

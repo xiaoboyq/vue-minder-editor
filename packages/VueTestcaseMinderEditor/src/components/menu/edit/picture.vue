@@ -7,11 +7,11 @@
     ></i>
     <el-dropdown trigger="click" @command="handleLinkCommand">
       <span class="el-dropdown-link">
-        链接<i class="el-icon-caret-bottom el-icon--right"></i>
+       图片<i class="el-icon-caret-bottom el-icon--right"></i>
       </span>
       <el-dropdown-menu slot="dropdown" class="selection-dropdown-list">
-        <el-dropdown-item command="add">插入超链接</el-dropdown-item>
-        <el-dropdown-item command="remove">移除已有超链接</el-dropdown-item>
+        <el-dropdown-item command="add">插入图片</el-dropdown-item>
+        <el-dropdown-item command="remove">移除已有图片</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
 
@@ -23,11 +23,8 @@
         label-width="100px"
         :model="formData"
       >
-        <el-form-item label="链接地址" prop="url">
-          <el-input
-            v-model="formData.url"
-            placeholder="必填：以http(s):// 开头"
-          />
+        <el-form-item label="选择图片" prop="img">
+          <el-upload>选择图片</el-upload>
         </el-form-item>
         <el-form-item label="提示文本" prop="title">
           <el-input
@@ -49,7 +46,7 @@
 import { mapGetters } from "vuex";
 
 export default {
-  name: "hyberlink",
+  name: "picture",
   data() {
     return {
       reslove: null,
@@ -63,8 +60,6 @@ export default {
         url: [
           {
             required: true,
-            pattern: /http[s]{0,1}:\/\/([\w.]+\/?)\S*/,
-            message: "请输入正确链接",
             trigger: "blur",
           },
         ],
@@ -102,6 +97,7 @@ export default {
     },
     addLinkModal() {
       this.openModal();
+      // minder.execCommand('Image', url, title);
     },
     removeHyperLick() {
       this.minder.execCommand("HyperLink", null);
@@ -110,15 +106,16 @@ export default {
     handleSubmit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.resolve({
-            url: this.formData.url,
-            title: this.formData.title,
-          });
-          this.minder.execCommand(
-            "HyperLink",
-            this.formData.url,
-            this.formData.title
-          );
+          // this.resolve({
+          //   url: this.formData.url,
+          //   title: this.formData.title,
+          // });
+          // this.minder.execCommand(
+          //   "HyperLink",
+          //   this.formData.url,
+          //   this.formData.title
+          // );
+          this.minder.execCommand("Image", 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png', '测试');
           this.visible = false;
           this.initData();
         }

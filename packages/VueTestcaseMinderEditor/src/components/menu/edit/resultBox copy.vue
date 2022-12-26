@@ -1,5 +1,5 @@
 <template lang="">
-<div class="result-group" :disabled="commandDisabled">
+<div class="result-group" :disabled="commandDisabled||isDisableSelect">
   <button title="移除结果 Alt+D" @click="execCommand(0)"  style="padding: 4px; height: 28px;">
     <i aria-label="图标: minus-circle" class="anticon anticon-minus-circle" style="font-size: 18px; color: rgba(0, 0, 0, 0.6);"><svg viewBox="64 64 896 896" focusable="false" class="" data-icon="minus-circle" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm192 472c0 4.4-3.6 8-8 8H328c-4.4 0-8-3.6-8-8v-48c0-4.4 3.6-8 8-8h368c4.4 0 8 3.6 8 8v48z"></path></svg></i>
   </button>
@@ -51,29 +51,28 @@ export default {
         4: 4 // 不执行
       }
       if (!this.tagEditCheck()) {
-        this.$message.warning('只能在用例节点或其上级操作')
         return
       }
+
+      // 对子节点处理
       const selectNodes = window.minder.getSelectedNodes()
-      let allIsCase = true
       if (selectNodes && selectNodes.length > 0) {
         for (let i = 0; i < selectNodes.length; i++) {
           const element = selectNodes[i]
-          if (!element.data.resource || !element.data.resource.includes('用例')) {
+          // 通过操作模块的状态来批量修改用例的状态时，仅可影响属于当前模块的下一级，且标签为用例的状态
+          if ((!element.data.resource || !element.data.resource.includes('用例')) && element.children) {
+            // this.$message.warning('只能在用例中添加')
+            element.children.length && element.children.forEach(v => {
+              if (v.data.resource && v.data.resource.includes('用例')) {
+                v.data.result = indexTocommandValueMap[parseInt(index)]
+              }
+            })
+          } else if (element.data.resource.includes('用例')) {
             // 当前不是用例 不添加tag
-            allIsCase = false
-            break
+            this.commandDisabled || this.minder.execCommand('result', indexTocommandValueMap[parseInt(index)])
           }
         }
       }
-      this.commandDisabled || this.minder.execCommand('result', indexTocommandValueMap[parseInt(index)])
-      if (!allIsCase) {
-        // 批量操作时候 去除非用例点击节点的标签
-        this.$nextTick(() => {
-          this.commandDisabled || this.minder.execCommand('result', null)
-        })
-      }
-      // console.log('indexTocommandValueMap[parseInt(index)', indexTocommandValueMap[parseInt(index)])
     },
     isActive(index) {
       return this.minder.queryCommandValue && this.minder.queryCommandValue('result') == index;
@@ -125,6 +124,7 @@ export default {
       }
       this.commandValue = minder.queryCommandValue('result');
     }
-  }
+  },
+  created() {}
 }
 </script>

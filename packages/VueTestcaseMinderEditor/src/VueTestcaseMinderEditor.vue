@@ -1,107 +1,116 @@
 <template>
-  <editor class="vue-testcase-minder-editor-container"
-      :allowEditPriority="allowEditPriority"
-      :allowEditLabel="allowEditLabel"
-      :allowEditResult="allowEditResult"
-      :allowEditNode="allowEditNode"
+  <div ref="editor">
+  <editor
+    class="vue-testcase-minder-editor-container"
+    :allowEditPriority="allowEditPriority"
+    :allowEditLabel="allowEditLabel"
+    :allowEditResult="allowEditResult"
+    :allowEditNode="allowEditNode"
+    :tags="tags"
+    @afterMount="$emit('afterMount')"
+    :editNodeFn="editNodeFn"
+    :tag-edit-check="tagEditCheck"
   ></editor>
+  </div>
 </template>
 
 <script>
-import editor from './components/editor.vue'
-import Vue from 'vue'
+import editor from "./components/editor.vue";
+import Vue from "vue";
 
 // 非正规写法，这个 store 为了方便外部引用得变成一个 module
-import caseEditorStore from './store'
-import 'element-ui/lib/theme-chalk/index.css'
-import ElementUI from 'element-ui'
-import $ from 'jquery'
+import caseEditorStore from "./store";
+// import "element-ui/lib/theme-chalk/index.css";
+import ElementUI from "element-ui";
 
-require('codemirror')
-require('codemirror/mode/xml/xml')
-require('codemirror/mode/javascript/javascript')
-require('codemirror/mode/css/css')
-require('codemirror/mode/htmlmixed/htmlmixed')
-require('codemirror/mode/markdown/markdown')
-require('codemirror/addon/mode/overlay')
-require('codemirror/mode/gfm/gfm')
-require('marked')
+require("codemirror");
+require("codemirror/mode/xml/xml");
+require("codemirror/mode/javascript/javascript");
+require("codemirror/mode/css/css");
+require("codemirror/mode/htmlmixed/htmlmixed");
+require("codemirror/mode/markdown/markdown");
+require("codemirror/addon/mode/overlay");
+require("codemirror/mode/gfm/gfm");
+require("marked");
 
-require('kity')
+require("kity");
 
 // require('../node_modules/hotbox/hotbox.js')
-require('../../../hotbox/hotbox.js')
+require("../../../hotbox/hotbox.js");
 // require('../node_modules/kityminder-core/dist/kityminder.core.js')
-require('../../../kityminder-core/dist/kityminder.core.js')
+require("../../../kityminder-core/dist/kityminder.core.js");
 
-require('./script/expose-editor.js')
+require("./script/expose-editor.js");
 
-Vue.use(ElementUI)
+Vue.use(ElementUI);
 
-import {
-  mapMutations,
-  mapGetters
-} from 'vuex'
+import { mapMutations, mapGetters } from "vuex";
 
 export default {
   components: { editor },
-  name: 'VueTestcaseMinderEditor',
+  name: "VueTestcaseMinderEditor",
   caseEditorStore,
   data() {
     return {
-      minder: {}
-    }
+      minder: {},
+    };
   },
   props: {
     initJson: {
       type: Object,
       default: {
-        'root': {
-            "data": {
-                "id": "c9hol4de1iw0",
-                "created": 1614161753133,
-                "text": "中心主题"
-            },
-            "template": "default",
-            "theme": "fresh-blue",
-            "version": "1.4.43"
-        }
-      }
+        root: {
+          data: {
+            id: "c9hol4de1iw0",
+            created: 1614161753133,
+            text: "中心主题",
+          },
+          template: "default",
+          theme: "fresh-blue",
+          version: "1.4.43",
+        },
+      },
     },
+    editNodeFn: Function,
     allowEditPriority: {
       type: Boolean,
-      default: true
+      default: true,
     },
     allowEditLabel: {
       type: Boolean,
-      default: true
+      default: true,
     },
     allowEditResult: {
       type: Boolean,
-      default: true
+      default: true,
     },
     allowEditNode: {
       type: Boolean,
-      default: true
+      default: true,
+    },
+    tagEditCheck: Function,
+    tags: {
+      type: Array,
+      default: []
+    },
+    customArr: {
+      type: Array,
+      default: []
     }
   },
   computed: {
-    ...mapGetters('caseEditorStore', [
-      'config'
-    ]),
+    ...mapGetters("caseEditorStore", ["config"]),
   },
   methods: {
-    ...mapMutations('caseEditorStore', [
-      'setConfig'
-    ]),
+    ...mapMutations("caseEditorStore", ["setConfig"]),
     getJsonData() {
-      return this.minder.exportJson()
-    }
+      return this.minder.exportJson();
+    },
   },
   mounted() {
-    // TODO: 直接从 window 取 minder 不大好，应该调用 vuex 
-    this.minder = window.minder
-    this.minder.importJson(this.initJson)
+    // TODO: 直接从 window 取 minder 不大好，应该调用 vuex
+    this.minder = window.minder;
+    this.minder.importJson(this.initJson);
   },
   watch: {
     // 因为父组件有可能是通过异步等方式来获取初始化 Json 的，
@@ -109,31 +118,43 @@ export default {
     initJson: {
       deep: true,
       handler(val) {
-        this.minder.importJson(val)
-      }
+        this.minder.importJson(val);
+      },
+    },
+    tags: {
+      immediate: true,
+      handler(value) {
+        this.setConfig({ tags: value });
+      },
+    },
+    customArr: {
+      immediate: true,
+      handler(value) {
+        this.setConfig({ customArr: value });
+      },
     },
     allowEditPriority: {
       handler(value) {
-        this.setConfig({"allowEditPriority": value})
-      }
+        this.setConfig({ allowEditPriority: value });
+      },
     },
     allowEditLabel: {
       handler(value) {
-        this.setConfig({"allowEditLabel": value})
-      }
+        this.setConfig({ allowEditLabel: value });
+      },
     },
     allowEditResult: {
       handler(value) {
-        this.setConfig({"allowEditResult": value})
-      }
+        this.setConfig({ allowEditResult: value });
+      },
     },
     allowEditNode: {
       handler(value) {
-        this.setConfig({"allowEditNode": value})
-      }
-    }
-  }
-}
+        this.setConfig({ allowEditNode: value });
+      },
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -148,16 +169,23 @@ body {
   margin: 0;
 }
 
-article, aside, footer, header, nav, section {
+article,
+aside,
+footer,
+header,
+nav,
+section {
   display: block;
 }
 
 h1 {
   font-size: 2em;
-  margin: .67em 0;
+  margin: 0.67em 0;
 }
 
-figcaption, figure, main {
+figcaption,
+figure,
+main {
   display: block;
 }
 
@@ -181,7 +209,8 @@ a {
   -webkit-text-decoration-skip: objects;
 }
 
-a:active, a:hover {
+a:active,
+a:hover {
   outline-width: 0;
 }
 
@@ -191,15 +220,19 @@ abbr[title] {
   border-bottom: none;
 }
 
-b, strong {
+b,
+strong {
   font-weight: inherit;
 }
 
-b, strong {
+b,
+strong {
   font-weight: bolder;
 }
 
-code, kbd, samp {
+code,
+kbd,
+samp {
   font-family: monospace, monospace;
   font-size: 1em;
 }
@@ -217,7 +250,8 @@ small {
   font-size: 80%;
 }
 
-sub, sup {
+sub,
+sup {
   font-size: 75%;
   line-height: 0;
   position: relative;
@@ -225,14 +259,15 @@ sub, sup {
 }
 
 sub {
-  bottom: -.25em;
+  bottom: -0.25em;
 }
 
 sup {
-  top: -.5em;
+  top: -0.5em;
 }
 
-audio, video {
+audio,
+video {
   display: inline-block;
 }
 
@@ -249,37 +284,52 @@ svg:not(:root) {
   overflow: hidden;
 }
 
-button, input, optgroup, select, textarea {
+button,
+input,
+optgroup,
+select,
+textarea {
   font-family: sans-serif;
   font-size: 100%;
   line-height: 1.15;
   margin: 0;
 }
 
-button, input {
+button,
+input {
   overflow: visible;
 }
 
-button, select {
+button,
+select {
   text-transform: none;
 }
 
-button, html [type='button'], [type='reset'], [type='submit'] {
+button,
+html [type="button"],
+[type="reset"],
+[type="submit"] {
   -webkit-appearance: button;
 }
 
-[type='button']::-moz-focus-inner, [type='reset']::-moz-focus-inner, [type='submit']::-moz-focus-inner, button::-moz-focus-inner {
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner,
+button::-moz-focus-inner {
   padding: 0;
   border-style: none;
 }
 
-[type='button']:-moz-focusring, [type='reset']:-moz-focusring, [type='submit']:-moz-focusring, button:-moz-focusring {
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring,
+button:-moz-focusring {
   outline: 1px dotted ButtonText;
 }
 
 fieldset {
   margin: 0 2px;
-  padding: .35em .625em .75em;
+  padding: 0.35em 0.625em 0.75em;
   border: 1px solid #c0c0c0;
 }
 
@@ -301,21 +351,24 @@ textarea {
   overflow: auto;
 }
 
-[type='checkbox'], [type='radio'] {
+[type="checkbox"],
+[type="radio"] {
   box-sizing: border-box;
   padding: 0;
 }
 
-[type='number']::-webkit-inner-spin-button, [type='number']::-webkit-outer-spin-button {
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
   height: auto;
 }
 
-[type='search'] {
+[type="search"] {
   outline-offset: -2px;
   -webkit-appearance: textfield;
 }
 
-[type='search']::-webkit-search-cancel-button, [type='search']::-webkit-search-decoration {
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
 
@@ -324,7 +377,8 @@ textarea {
   -webkit-appearance: button;
 }
 
-details, menu {
+details,
+menu {
   display: block;
 }
 
@@ -350,11 +404,11 @@ template {
 }
 
 .vue-testcase-minder-editor-container.full-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh !important;
-    z-index: 99;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh !important;
+  z-index: 99;
 }
 </style>

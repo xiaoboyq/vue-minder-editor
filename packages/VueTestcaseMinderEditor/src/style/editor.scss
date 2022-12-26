@@ -1,6 +1,6 @@
-@import "~codemirror/lib/codemirror.css";
+// @import "~codemirror/lib/codemirror.css";
 //@import "~kityminder-core/dist/kityminder.core.css";
-@import "~@/../kityminder-core/dist/kityminder.core.css";
+// @import "~@/../kityminder-core/dist/kityminder.core.css";
 @import "navigator.scss";
 @import "hotbox.scss";
 
@@ -149,4 +149,7 @@ div.minder-editor-container {
   position: fixed;
   z-index: 999;
   user-select: text;
+  img {
+    max-width: 200px;
+  }
 }

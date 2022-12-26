@@ -61,7 +61,7 @@ define(function(require, exports, module) {
                 this.addShapes([this.rect, this.path]);
 
                 this.on('mouseover', function() {
-                    this.rect.fill('rgba(255, 255, 200, .8)');
+                    this.rect.fill('rgba(62, 123, 191,0.4)');
                 }).on('mouseout', function() {
                     this.rect.fill('transparent');
                 });
@@ -75,16 +75,21 @@ define(function(require, exports, module) {
 
             create: function(node) {
                 var icon = new NoteIcon();
-                icon.on('mousedown', function(e) {
-                    e.preventDefault();
-                    node.getMinder().fire('editnoterequest');
-                });
-                icon.on('mouseover', function() {
+                // icon.on('mousedown', function(e) {
+                //     e.preventDefault();
+                //     node.getMinder().fire('editnoterequest');
+                // });
+                icon.on('click', function() {
                     node.getMinder().fire('shownoterequest', {node: node, icon: icon});
                 });
-                icon.on('mouseout', function() {
-                    node.getMinder().fire('hidenoterequest', {node: node, icon: icon});
-                });
+                // icon.on('click', function(e) {
+                //     console.log('node', node)
+                //     e.preventDefault();
+                //     e.stopPropagation()
+                // })
+                // icon.on('mouseout', function() {
+                //     node.getMinder().fire('hidenoterequest', {node: node, icon: icon});
+                // });
                 return icon;
             },
 

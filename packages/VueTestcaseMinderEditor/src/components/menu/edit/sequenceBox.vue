@@ -1,6 +1,6 @@
 <template lang="">
-<div class="sequence-group" >
-  <ul :disabled="commandDisabled">
+<div class="sequence-group" style="width: 120px">
+  <ul :disabled="commandDisabled" style="width: 120px">
     <li
       v-for="(item, index) in items"
       class="menu-btn"
@@ -16,6 +16,7 @@ import {
   mapGetters,
   mapActions
 } from 'vuex'
+
 export default {
   name: 'sequenceBox',
   data() {
@@ -25,7 +26,7 @@ export default {
         { id: '1' },
         { id: '2' },
         { id: '3' },
-        // { id: '4' },
+        { id: '4' }
         // { id: '5' },
         // { id: '6' },
         // { id: '7' },

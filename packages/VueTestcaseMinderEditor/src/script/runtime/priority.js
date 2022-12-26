@@ -55,5 +55,5 @@ define(function (require, exports, module) {
       next: 'back'
     });
   }
-  return module.exports = PriorityRuntime;
+  return module.exports = null;
 });

@@ -1,5 +1,5 @@
 <template lang="">
-<div class="attachment-group">
+<div class="attachment-group"  :disabled="commandDisabled">
   <div class="link ">
     <el-button class="tab-icons insert" @click="showOverlay"></el-button>
     <el-dropdown trigger="click">
@@ -45,8 +45,7 @@
 <script>
 import {
   mapGetters,
-  mapActions,
-  mapMutations
+  mapActions
 } from 'vuex'
 export default {
   name: 'attachment',

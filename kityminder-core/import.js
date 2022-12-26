@@ -69,6 +69,8 @@
         'src/module/priority.js',
         'src/module/image.js',
         'src/module/resource.js',
+        'src/module/question.js',
+        'src/module/custom.js',
         'src/module/view.js',
         'src/module/dragtree.js',
         'src/module/keynav.js',

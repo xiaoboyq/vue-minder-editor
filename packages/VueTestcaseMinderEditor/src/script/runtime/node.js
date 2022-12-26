@@ -7,6 +7,8 @@ define(function (require, exports, module) {
 
     var main = hotbox.state('main');
 
+    var { markDeleteNode } = require('../tool/utils');
+
     var buttons = [
       '前移:Alt+Up:ArrangeUp',
       '下级:Tab|Insert:AppendChildNode',
@@ -40,6 +42,9 @@ define(function (require, exports, module) {
             }
             minder.on('layoutallfinish', afterAppend);
           } else {
+            if (command.indexOf('RemoveNode') > -1) {
+              markDeleteNode(minder);
+            }
             minder.execCommand(command);
             fsm.jump('normal', 'command-executed');
           }

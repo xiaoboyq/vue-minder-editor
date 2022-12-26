@@ -28,7 +28,7 @@ export default {
     name: 'mold',
     data() {
         return {
-            mold_index: 1,
+            mold_index: 4,
         }
     },
     computed: {

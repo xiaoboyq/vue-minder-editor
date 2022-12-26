@@ -1,4 +1,4 @@
-define(function(require, exports, module) {
+define(function (require, exports, module) {
     var kity = require('./kity');
     var utils = require('./utils');
     var Minder = require('./minder');
@@ -31,7 +31,7 @@ define(function(require, exports, module) {
     kity.extendClass(Minder, {
 
         // 自动导入
-        setup: function(target) {
+        setup: function (target) {
             if (typeof target == 'string') {
                 target = document.querySelector(target);
             }
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
          *     导出当前脑图数据为 JSON 对象，导出的数据格式请参考 [Data](data) 章节。
          * @grammar exportJson() => {plain}
          */
-        exportJson: function() {
+        exportJson: function () {
             /* 导出 node 上整棵树的数据为 JSON */
             function exportNode(node) {
                 var exported = {};
@@ -102,8 +102,11 @@ define(function(require, exports, module) {
                 jsonMap = {},
                 level = 0;
 
-            var LINE_SPLITTER = /\r|\n|\r\n/,
-                TAB_REGEXP = /^(\t|\x20{4})/;
+            // 对换行的数据进行兼容
+            // var LINE_SPLITTER = /\r|\n|\r\n/,
+            //    TAB_REGEXP = /^(\t|\x20{4})/;
+            var LINE_SPLITTER = /\r|\r\n/,
+                TAB_REGEXP = /^(\n\t|\t|\x20{4})/;
 
             var lines = text.split(LINE_SPLITTER),
                 line = '', jsonNode, i = 0;
@@ -116,7 +119,8 @@ define(function(require, exports, module) {
             function getNode(line) {
                 return {
                     data: {
-                        text: line.replace(/^(\t|\x20{4})+/, '').replace(/(\t|\x20{4})+$/, '')
+                        // text: line.replace(/^(\t|\x20{4})+/, '').replace(/(\t|\x20{4})+$/, '')
+                        text: line.replace(/^(\n\t|\x20{4})+/, '').replace(/(\t|\x20{4})+$/, '')
                     },
                     children: []
                 }
@@ -135,10 +139,37 @@ define(function(require, exports, module) {
                 parent.children.push(node);
             }
 
+            // for (var i = nodes.length - 1; i >= 0; i--) {
+            //   _node = minder.createNode(null, node);
+            //   minder.importNode(_node, nodes[i]);
+            //   _selectedNodes.push(_node);
+            //   node.appendChild(_node);
+            // }
+
+            var guid = function () {
+                // 出处：https://www.codenong.com/cs106429627/
+                return 'xxxxxx-x4xxx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0
+                    var v = c === 'x' ? r : (r & 0x3 | 0x8)
+                    return v.toString(16)
+                })
+            }
+
             function importChildren(node, children) {
                 for (var i = 0, l = children.length; i < l; i++) {
                     var childNode = minder.createNode(null, node);
                     childNode.setData('text', children[i].data.text || '');
+                    // console.log('childNode', childNode)
+                    // childNode.data.id = null;
+                    childNode.data.loaded = true
+                    childNode.data.contextChanged = true;
+                    childNode.data.changed = true;
+                    childNode.data.id = guid()
+                    // console.log('childNode', childNode)
+                    // if(children[i].children && children[i].children.length) {
+                    //     childNode.expandState = "collapse"
+                    // }
+                    // resetNodes(childNode);
                     importChildren(childNode, children[i].children);
                 }
             }
@@ -152,16 +183,15 @@ define(function(require, exports, module) {
                 if (level === 0) {
                     jsonMap = {};
                     children.push(jsonNode);
-                    jsonMap[0] = children[children.length-1];
+                    jsonMap[0] = children[children.length - 1];
                 } else {
-                    if (!jsonMap[level-1]) {
+                    if (!jsonMap[level - 1]) {
                         throw new Error('Invalid local format');
                     };
-                    addChild(jsonMap[level-1], jsonNode);
+                    addChild(jsonMap[level - 1], jsonNode);
                     jsonMap[level] = jsonNode;
                 }
             }
-
             importChildren(node, children);
             minder.refresh();
         },
@@ -189,7 +219,7 @@ define(function(require, exports, module) {
          * @Editor: Naixor
          * @Date: 2015.9.20
          */
-        importNode: function(node, json) {
+        importNode: function (node, json) {
             var data = json.data;
             node.data = {};
 
@@ -214,7 +244,7 @@ define(function(require, exports, module) {
          *
          * @param {plain} json 要导入的数据
          */
-        importJson: function(json) {
+        importJson: function (json) {
             if (!json) return;
 
             /**
@@ -262,7 +292,7 @@ define(function(require, exports, module) {
          *
          * @param {string} protocol 指定的数据协议（默认内置五种数据协议 `json`、`text`、`markdown`、`svg` 和 `png`）
          */
-        exportData: function(protocolName, option) {
+        exportData: function (protocolName, option) {
             var json, protocol;
 
             json = this.exportJson();
@@ -296,7 +326,7 @@ define(function(require, exports, module) {
          * @param {string} protocol 指定的用于解析数据的数据协议（默认内置三种数据协议 `json`、`text` 和 `markdown` 的支持）
          * @param {any} data 要导入的数据
          */
-        importData: function(protocolName, data, option) {
+        importData: function (protocolName, data, option) {
             var json, protocol;
             var minder = this;
 
@@ -318,7 +348,7 @@ define(function(require, exports, module) {
             // 导入前抛事件
             this._fire(new MinderEvent('beforeimport', params));
 
-            return Promise.resolve(protocol.decode(data, this, option)).then(function(json) {
+            return Promise.resolve(protocol.decode(data, this, option)).then(function (json) {
                 minder.importJson(json);
                 return json;
             });
@@ -334,7 +364,7 @@ define(function(require, exports, module) {
          * @param {string} protocol 指定的用于解析数据的数据协议（默认内置三种数据协议 `json`、`text` 和 `markdown` 的支持）
          * @param {any} data 要导入的数据
          */
-        decodeData: function(protocolName, data, option) {
+        decodeData: function (protocolName, data, option) {
             var json, protocol;
             var minder = this;
 

@@ -1,6 +1,5 @@
 <template>
   <div v-show="showSearch" id="search" class="search-box clearfix">
-
     <div class="input-group input-group-sm search-input-wrap">
       <el-input
         ref="searchInput"
@@ -20,145 +19,162 @@
         type="default"
         class="btn btn-default"
         icon="el-icon-arrow-up"
-        @click="() => { doSearch('prev') }"
+        @click="
+          () => {
+            doSearch('prev');
+          }
+        "
       />
       <el-button
         type="default"
         class="btn btn-default"
         icon="el-icon-arrow-down"
-        @click="() => { doSearch('next') }"
+        @click="
+          () => {
+            doSearch('next');
+          }
+        "
       />
     </div>
     <div class="close-search" @click="exitSearch">
-      <span class="el-icon-close"/>
+      <span class="el-icon-close" />
     </div>
-
   </div>
 </template>
 
 <script>
-import $ from 'jquery'
-  import {mapGetters} from "vuex";
+import $ from "jquery";
+import { mapGetters } from "vuex";
 
-  let searchSequence = [];
-  let nodeSequence = [];
+let searchSequence = [];
+let nodeSequence = [];
 
-  export default {
-    name: "searchBox",
-    data() {
-      return {
-        showSearch: false,
-        keyword: '',
-        showTip: false,
-        curIndex: 1,
-        resultNum: 10
+export default {
+  name: "searchBox",
+  data() {
+    return {
+      showSearch: false,
+      keyword: "",
+      showTip: false,
+      curIndex: 1,
+      resultNum: 10,
+    };
+  },
+  computed: {
+    ...mapGetters("caseEditorStore", {
+      minder: "getMinder",
+      editor: "getEditor",
+    }),
+  },
+  created() {
+    $("body").on("keydown", (e) => {
+      if (e.keyCode == 70 && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
+        this.enterSearch();
+        e.preventDefault();
       }
-    },
-    computed: {
-      ...mapGetters('caseEditorStore', {
-        minder: "getMinder",
-        editor: "getEditor"
-      }),
-    },
-    created() {
-      $('body').on('keydown', (e) => {
-        if (e.keyCode == 70 && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
-          this.enterSearch();
-          e.preventDefault();
+    });
+  },
+  methods: {
+    enterSearch() {
+      this.showSearch = true;
+      // 有搜索结果选择， 无搜索结果获取焦点
+      this.$nextTick(() => {
+        if (this.keyword) {
+          this.$refs.searchInput.select();
+        } else {
+          this.$refs.searchInput.focus();
         }
       });
+      this.makeNodeSequence();
+      this.minder.on("contentchange", this.makeNodeSequence);
+      this.$once("hook:beforeDestroy", () => {
+        this.minder.off("contentchange", this.makeNodeSequence);
+      });
     },
-    methods: {
-      enterSearch() {
-        this.showSearch = true;
-        // 有搜索结果选择， 无搜索结果获取焦点
-        this.$nextTick(() => {
-          if (this.keyword) {
-            this.$refs.searchInput.select();
-          } else {
-            this.$refs.searchInput.focus();
-          }
-        });
-        this.makeNodeSequence();
-        this.minder.on('contentchange', this.makeNodeSequence);
-        this.$once('hook:beforeDestroy', () => {
-          this.minder.off('contentchange', this.makeNodeSequence);
-        });
-      },
-      handleKeyDown(e) {
-        if (e.keyCode == 13) {
-          const direction = e.shiftKey ? 'prev' : 'next';
-          this.doSearch(direction);
-        }
-        if (e.keyCode == 27) {
-          this.exitSearch();
-        }
-      },
-      doSearch(direction) {
-        this.showTip = true;
-        this.curIndex = 0;
-        this.resultNum = 0;
-        let keyword = this.keyword.toLowerCase();
-        let newSearch = this.doSearch.lastKeyword != keyword;
-        this.doSearch.lastKeyword = keyword;
-        if (newSearch) {
-          this.makeSearchSequence(keyword);
-        }
-        this.resultNum = searchSequence.length;
-        if (searchSequence.length) {
-          let curIndex = newSearch ? 0 : (direction === 'next' ? this.doSearch.lastIndex + 1 : this.doSearch.lastIndex - 1) || 0;
-          curIndex = (searchSequence.length + curIndex) % searchSequence.length;
-
-          this.setSearchResult(searchSequence[curIndex].node, searchSequence[curIndex].keyword);
-
-          this.doSearch.lastIndex = curIndex;
-
-          this.curIndex = curIndex + 1;
-        }
-      },
-      makeSearchSequence(keyword) {
-        searchSequence = [];
-        for (let i = 0; i < nodeSequence.length; i++) {
-          const node = nodeSequence[i];
-          const text = node.getText().toLowerCase();
-          const id = node.data.id.toLowerCase();
-          if (id.indexOf(keyword) != -1) {
-            searchSequence.push({node: node});
-          }
-          if (text.indexOf(keyword) != -1) {
-            searchSequence.push({node: node});
-          }
-          const note = node.getData('note');
-          if (note && note.toLowerCase().indexOf(keyword) != -1) {
-            searchSequence.push({node: node, keyword: keyword});
-          }
-        }
-      },
-      makeNodeSequence() {
-        nodeSequence = [];
-        this.minder.getRoot().traverse(function (node) {
-          nodeSequence.push(node);
-        });
-      },
-      setSearchResult(node, previewKeyword) {
-        this.minder.execCommand('camera', node, 50);
-        setTimeout(function () {
-          this.minder.select(node, true);
-          if (!node.isExpanded()) this.minder.execCommand('expand', true);
-          if (previewKeyword) {
-            this.minder.fire('shownoterequest', {node: node, keyword: previewKeyword});
-          }
-        }, 60);
-      },
-      exitSearch() {
-        this.showSearch = false;
-        this.$refs.searchInput.blur();
-        this.minder.fire('hidenoterequest');
-        this.editor.receiver.selectAll();
-        this.minder.off('contentchange', this.makeNodeSequence);
+    handleKeyDown(e) {
+      if (e.keyCode == 13) {
+        const direction = e.shiftKey ? "prev" : "next";
+        this.doSearch(direction);
       }
-    }
-  }
+      if (e.keyCode == 27) {
+        this.exitSearch();
+      }
+    },
+    doSearch(direction) {
+      this.showTip = true;
+      this.curIndex = 0;
+      this.resultNum = 0;
+      let keyword = this.keyword.toLowerCase();
+      let newSearch = this.doSearch.lastKeyword != keyword;
+      this.doSearch.lastKeyword = keyword;
+      if (newSearch) {
+        this.makeSearchSequence(keyword);
+      }
+      this.resultNum = searchSequence.length;
+      if (searchSequence.length) {
+        let curIndex = newSearch
+          ? 0
+          : (direction === "next"
+              ? this.doSearch.lastIndex + 1
+              : this.doSearch.lastIndex - 1) || 0;
+        curIndex = (searchSequence.length + curIndex) % searchSequence.length;
+
+        this.setSearchResult(
+          searchSequence[curIndex].node,
+          searchSequence[curIndex].keyword
+        );
+
+        this.doSearch.lastIndex = curIndex;
+
+        this.curIndex = curIndex + 1;
+      }
+    },
+    makeSearchSequence(keyword) {
+      searchSequence = [];
+      for (let i = 0; i < nodeSequence.length; i++) {
+        const node = nodeSequence[i];
+        const text = node.getText().toLowerCase();
+        const id = node.data.id.toLowerCase();
+        if (id.indexOf(keyword) != -1) {
+          searchSequence.push({ node: node });
+        }
+        if (text.indexOf(keyword) != -1) {
+          searchSequence.push({ node: node });
+        }
+        const note = node.getData("note");
+        if (note && note.toLowerCase().indexOf(keyword) != -1) {
+          searchSequence.push({ node: node, keyword: keyword });
+        }
+      }
+    },
+    makeNodeSequence() {
+      nodeSequence = [];
+      this.minder.getRoot().traverse(function (node) {
+        nodeSequence.push(node);
+      });
+    },
+    setSearchResult(node, previewKeyword) {
+      this.minder.execCommand("camera", node, 50);
+      setTimeout(function () {
+        this.minder.select(node, true);
+        if (!node.isExpanded()) this.minder.execCommand("expand", true);
+        if (previewKeyword) {
+          this.minder.fire("shownoterequest", {
+            node: node,
+            keyword: previewKeyword,
+          });
+        }
+      }, 60);
+    },
+    exitSearch() {
+      this.showSearch = false;
+      this.$refs.searchInput.blur();
+      this.minder.fire("hidenoterequest");
+      this.editor.receiver.selectAll();
+      this.minder.off("contentchange", this.makeNodeSequence);
+    },
+  },
+};
 </script>
 <style lang="less" scoped>
 .search-box {

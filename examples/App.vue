@@ -5,12 +5,15 @@
       ref="minderEditor"
       :allowEditPriority="editMode"
       :allowEditLabel="editMode"
-      :allowEditResult="editMode"
+      :allowEditResult="!editMode"
+      :tags="tags"
+      :customArr="customArr"
+      :editNodeFn="editNodeFn"
       :allowEditNode="editMode">
     </VueTestcaseMinderEditor>
 
     <button :style="{left: '0px'}" v-on:click="logCurrentData">打印当前用例 json 至 console 日志</button>
-    <button :style="{left: '0px'}" v-on:click="toggleEditMode">{{ buttonText }}</button>
+    <button :style="{left: '0px'}" v-on:click="toggleEditMode">{{ buttonText }} 123123</button>
   </div>
 </template>
 
@@ -20,6 +23,31 @@ export default {
   name: 'app',
   data () {
     return {
+      customArr: [
+        {
+          key: 'name1', 
+          options: [
+            {value: 1, text: '测试啊'},
+            {value: 2, text: 2},
+            {value: 3, text: 3},
+            {value: 31, text: 3},
+            {value: 32, text: 4},
+            {value: 33, text: 5},
+            {value: 34, text: 6},
+            {value: 35, text: 7},
+            {value: 36, text: 8},
+            {value: 36, text: 9},
+          ]
+        },
+        {
+          key: 'name2',
+          options: [
+            {value: 1, text: 1},
+            {value: 2, text: 2},
+            {value: 3, text: 3},
+          ]
+        },
+      ],
       initJson: {
         root: {
           data: {
@@ -34,12 +62,15 @@ export default {
             { data: { text: '音乐', id: '5', priority: 3 } },
             { data: { text: '图片', id: '6', priority: 3 } },
             { data: { text: '视频', id: '7', priority: 3 } },
-            { data: { text: '地图', id: '8', priority: 3 } },
-            { data: { text: '百科', id: '9', priority: 3 } },
+            { data: { text: '地图', id: '8', priority: 3, note: 34 } },
+            { data: { text: '百科', id: '9', priority: 3, note: '' } },
             { data: { text: '更多', id: '10', hyperlink: 'http://www.baidu.com/more' } }
           ]
-        }
+        },
+        template: 'right'
+
       },
+      tags: ['模块1', '用例', '前置条件', '测试步骤', '预期结果', '备注'],
       editMode: false
     }
   },
@@ -48,7 +79,20 @@ export default {
       return this.editMode === false ? '进入编辑模式，允许修改脑图内容及登记结果' : '退出编辑模式'
     }
   },
+  // mounted () {
+  //   this.$nextTick(() => {
+  //     if (window.minder) {
+  //       window.minder.on && window.minder.on('click', function (e) {
+  //         console.log('e', e)
+  //       })
+  //     }
+  //   })
+  // },
   methods: {
+    editNodeFn: function(node) {
+      console.log('node', node)
+      // alert(123)
+    },
     logCurrentData: function(event) {
       const caseJson = this.$refs.minderEditor.getJsonData();
       console.log('编辑器中的最新用例内容：', caseJson)

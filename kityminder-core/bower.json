@@ -1,0 +1,25 @@
+{
+  "name": "kityminder-core",
+  "description": "KityMinder Core Implement",
+  "main": "dist/kityminder.core.js",
+  "authors": [
+    "[object Object]"
+  ],
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "kityminder",
+    "kity",
+    "minder",
+    "svg",
+    "graphic",
+    "javascript"
+  ],
+  "homepage": "https://github.com/chenhengjie123/vue-testcase-minder-editor",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

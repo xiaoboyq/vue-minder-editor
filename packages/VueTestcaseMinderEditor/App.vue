@@ -9,14 +9,14 @@
       :allowEditNode="editMode">
     </VueTestcaseMinderEditor>
 
-    <button :style="{left: '0px'}" v-on:click="logCurrentData">打印当前用例 json 至 console 日志</button>
-    <button :style="{left: '0px'}" v-on:click="toggleEditMode">{{ buttonText }}</button>
+    <!-- <button :style="{left: '0px'}" v-on:click="logCurrentData">打印当前用例 json 至 console 日志</button> -->
+    <!-- <button :style="{left: '0px'}" v-on:click="toggleEditMode">{{ buttonText }}</button> -->
   </div>
 </template>
 
 <script>
 import VueTestcaseMinderEditor from './src/VueTestcaseMinderEditor.vue'
-
+import { setDefaultTheme } from './theme'
 
 export default {
   name: 'app',
@@ -47,6 +47,9 @@ export default {
       },
       editMode: false
     }
+  },
+  created() {
+    setDefaultTheme()
   },
   computed: {
     buttonText: function() {

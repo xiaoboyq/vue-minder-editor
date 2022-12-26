@@ -17,7 +17,6 @@ define(function(require, exports, module) {
          *     节点的初始数据或文本
          */
         constructor: function(textOrData) {
-
             // 指针
             this.parent = null;
             this.root = this;

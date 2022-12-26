@@ -73,6 +73,10 @@ store.registerModule('caseEditorStore', {
   ...VueTestcaseMinderEditor.caseEditorStore
 })
 ```
+// a02007c2-69a8-4e0c-ba5a-b0c443c13119 有
+// 4a17afb7-0637-498f-b953-a58c47644be1 没有
+
+<!-- case/node/minder/extraNode/count 输入ids 数组 返回有子节点的id -->
 
 在页面的 .vue 文件中
 
@@ -151,6 +155,7 @@ npm rebuild node-sass
 # kityminder-core
 cd kityminder-core && npm run build && cd ..
 ```
+
 
 * 如果需要本地调试，且不使用示例程序便于查看错误堆栈，请修改根目录下 vue.config.js 下面 entry 的值。改为注释下面代码片段中的第一行，去掉第二行的注释即可
 

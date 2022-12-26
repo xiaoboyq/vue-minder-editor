@@ -61,6 +61,8 @@ define(function(require, exports, module) {
     // 因为用例结果 result 需要占用 progress key 。为避免冲突，先注释掉。
     // require('./module/progress');
     require('./module/resource');
+    require('./module/question');
+    require('./module/custom');
     require('./module/result')
     require('./module/select');
     require('./module/style');

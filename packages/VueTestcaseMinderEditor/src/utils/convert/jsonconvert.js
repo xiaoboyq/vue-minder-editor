@@ -15,6 +15,8 @@ const NODE_DATA_KEY =  [
   'testResult',
   'auto',
   'resource',
+  'question',
+  'custom',
   'leafNode',
   'createTime',
   'createUser',

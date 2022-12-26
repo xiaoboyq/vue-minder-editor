@@ -33,7 +33,6 @@ export const state = {
       150,
       200
     ],
-    
     // 允许编辑优先级
     allowEditPriority: true,
 
@@ -45,8 +44,16 @@ export const state = {
 
     // 允许编辑节点
     allowEditNode: true,
+    allowOperate: true,
 
     // 是否全屏
-    isFullScreen: false
+    isFullScreen: false,
+    customArr: [],
+    tags: ['用例', '前置条件', '备注', '模块'],
+    distinctTags: ['用例', '模块', '前置条件', '备注'],
+    questionTags: ['从此处开始', '此处有疑问', '此处需修改', '此处需补充'],
+    distinctQuestionTags: ['从此处开始', '此处有疑问', '此处需修改', '此处需补充']
+    // resultTags: ['通过', '失败', '阻塞', '跳过'],
+    // resultDistinctTags: ['用例', '模块', '前置条件', '备注']
   }
 }

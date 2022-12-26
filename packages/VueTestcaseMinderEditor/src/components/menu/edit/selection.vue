@@ -23,14 +23,21 @@
 </template>
 
 <script>
+import { mapMutations, mapGetters } from "vuex";
+
 export default {
   name: 'selection',
+  computed: {
+    ...mapGetters("caseEditorStore", ["config"]),
+  },
   methods: {
+    ...mapMutations("caseEditorStore", ["setConfig"]),
     selectAll() {
       var selection = [];
       minder.getRoot().traverse(function (node) {
         selection.push(node);
       });
+      this.setConfig({ allowOperate: false });
       minder.select(selection, true);
       minder.fire('receiverfocus');
     },
@@ -98,22 +105,42 @@ export default {
       minder.select(selection, true);
       minder.fire('receiverfocus');
     },
+    hasRootNode(selectedNodes) {
+      console.log(!!selectedNodes.filter(v => v.type === 'root').length)
+      return !!selectedNodes.filter(v => v.type === 'root').length
+    },
 
     handleCommand(command) {
+      var selected = minder.getSelectedNodes();
       switch (~~command) {
         case 1:
+          if (selected && selected.length) {
+            this.setConfig({ allowOperate: true });
+          } else {
+            this.setConfig({ allowOperate: false });
+          }
           this.selectRevert()
           break;
         case 2:
+          this.setConfig({ allowOperate: true });
           this.selectSiblings()
           break;
         case 3:
+          // this.setConfig({ allowOperate: true });
           this.selectLevel()
           break;
         case 4:
+          // this.setConfig({ allowOperate: true });
           this.selectPath()
           break;
         case 5:
+          console.log('selected', selected)
+         
+          if (selected && selected.length && this.hasRootNode(selected)) {
+            this.setConfig({ allowOperate: false });
+          } else {
+            this.setConfig({ allowOperate: true });
+          }
           this.selectTree()
           break;
       }
@@ -121,3 +148,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .dropdown-item {
+    cursor: pointer;
+  }
+</style>

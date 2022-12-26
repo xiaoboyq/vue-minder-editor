@@ -15,6 +15,8 @@
 import {
   mapGetters
 } from 'vuex';
+import {isDeleteDisableNode, isDisableNode, markDeleteNode} from "../../../script/tool/utils";
+
 export default {
   name: 'edit_del',
   computed: {
@@ -34,6 +36,10 @@ export default {
       this.minder.queryCommandState('text') === -1 || this.editNode();
     },
     del() {
+      // if (this.removeNodeDisabled) {
+      //   return;
+      // }
+      markDeleteNode(this.minder);
       this.minder.queryCommandState('RemoveNode') === -1 || this.minder.execCommand('RemoveNode');
     },
     editNode() {

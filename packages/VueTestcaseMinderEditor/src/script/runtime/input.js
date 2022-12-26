@@ -9,9 +9,12 @@
 define(function (require, exports, module) {
 
   require('../tool/innertext');
-
+  var {isDisableNode, markChangeNode} = require('../tool/utils');
   var Debug = require('../tool/debug');
   var debug = new Debug('input');
+
+  // var node = minder.getSelectedNode();
+  // node.setS
 
   function InputRuntime() {
     var fsm = this.fsm;
@@ -107,7 +110,7 @@ define(function (require, exports, module) {
     /**
      * 增加对字体的鉴别，以保证用户在编辑状态ctrl/cmd + b/i所触发的加粗斜体与显示一致
      * @editor Naixor
-     * @Date 2015-12-2
+     * @Date 2022-12-07
      */
     // edit for the selected node
     function editText() {
@@ -115,6 +118,8 @@ define(function (require, exports, module) {
       if (!node) {
         return;
       }
+      markChangeNode(node);
+
       var textContainer = receiverElement;
       receiverElement.innerText = "";
       if (node.getData('font-weight') === 'bold') {
