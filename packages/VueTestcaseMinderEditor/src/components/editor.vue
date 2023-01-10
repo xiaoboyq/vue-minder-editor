@@ -79,6 +79,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    allowOperate: {
+      type: Boolean,
+      default: true,
+    },
     editNodeFn: Function
   },
   mounted() {
@@ -98,6 +102,7 @@ export default {
       allowEditLabel: this.allowEditLabel,
       allowEditResult: this.allowEditResult,
       allowEditNode: this.allowEditNode,
+      allowOperate: this.allowOperate,
     });
 
     this.reloadModules(this.config);

@@ -49,6 +49,7 @@ define(function(require, exports, module) {
             }
         });
 
+        
         var NoteIcon = kity.createClass('NoteIcon', {
             base: kity.Group,
 
@@ -75,12 +76,20 @@ define(function(require, exports, module) {
 
             create: function(node) {
                 var icon = new NoteIcon();
+                icon.path.fill('#c0c4cc');
                 // icon.on('mousedown', function(e) {
                 //     e.preventDefault();
                 //     node.getMinder().fire('editnoterequest');
                 // });
                 icon.on('click', function() {
-                    node.getMinder().fire('shownoterequest', {node: node, icon: icon});
+                    console.log('点击note', node)
+                    // ID.length < 15 时 表示这是未保存的用例
+                    if(node.data.id && node.data.id.length > 15) {
+                       node.getMinder().fire('shownoterequest', {node: node, icon: icon});
+                    } 
+                    else {
+                       node.getMinder().fire('shownoteLimitMessage', {node: node, icon: icon});
+                    }
                 });
                 // icon.on('click', function(e) {
                 //     console.log('node', node)
@@ -100,8 +109,12 @@ define(function(require, exports, module) {
             update: function(icon, node, box) {
                 var x = box.right + node.getStyle('space-left');
                 var y = box.cy;
-
-                icon.path.fill(node.getStyle('color'));
+                // 实时更新评论时候 删除或者添加评论
+                if(node.data.note && node.data.note !== '0') {
+                    icon.path.fill('#783887');
+                } else {
+                    icon.path.fill('#c0c4cc');
+                }
                 icon.setTranslate(x, y);
 
                 return new kity.Box(x, Math.round(y - icon.height / 2), icon.width, icon.height);

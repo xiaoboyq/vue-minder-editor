@@ -31,6 +31,7 @@ export default {
 
     // 显示 note 浮层 kityminder-core 源码src/module/note.js NoteIconRenderer
     window.minder.on("shownoterequest", this.shownoterequest);
+    window.minder.on("shownoteLimitMessage", this.shownoteLimitMessage);
 
     // 对操作进行监听 node有变化时候 调用markChangeNode 对node属性进行修改 change: true
     window.minder.on('preExecCommand', function (env) {
@@ -102,6 +103,9 @@ export default {
       // this.previewTimer = setTimeout(() => {
       //   this.main.preview(e.node, e.keyword);
       // }, 300);
+    },
+    shownoteLimitMessage() {
+      this.$message.warning('新建用例未保存之前不可添加评论')
     },
     hidenoterequest() {
       clearTimeout(this.previewTimer);

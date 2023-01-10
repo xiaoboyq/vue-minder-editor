@@ -6,6 +6,7 @@
     :allowEditLabel="allowEditLabel"
     :allowEditResult="allowEditResult"
     :allowEditNode="allowEditNode"
+    :allowOperate="allowOperate"
     :tags="tags"
     @afterMount="$emit('afterMount')"
     :editNodeFn="editNodeFn"
@@ -88,6 +89,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    allowOperate: {
+      type: Boolean,
+      default: true,
+    },
     tagEditCheck: Function,
     tags: {
       type: Array,
@@ -151,6 +156,11 @@ export default {
     allowEditNode: {
       handler(value) {
         this.setConfig({ allowEditNode: value });
+      },
+    },
+    allowOperate: {
+      handler(value) {
+        this.setConfig({ allowOperate: value });
       },
     },
   },

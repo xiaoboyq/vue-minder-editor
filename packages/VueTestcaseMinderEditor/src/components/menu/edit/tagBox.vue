@@ -72,7 +72,7 @@ export default {
         origin.push(resourceName);
         this.minder.execCommand('resource', origin);
         if (origin.includes('用例')) {
-          this.minder.execCommand("note", ' ');
+          this.minder.execCommand("note", '0');
         } else {
           this.minder.execCommand("note", '');
         }
