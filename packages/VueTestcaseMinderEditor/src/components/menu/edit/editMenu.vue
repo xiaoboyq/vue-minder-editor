@@ -10,14 +10,14 @@
   <div :class="!allowOperate ? 'menu-limitOperate' : 'menu-operator'" :disabled="!allowOperate">
     <sequence-box v-if="allowEditNode"/>
     <tag-box :tag-edit-check="tagEditCheck" v-if="allowEditNode" :tags="tags" :distinctTags="distinctTags"/>
-      <!--  自定义标签-->
-      <template v-if="allowEditLabel" >
-        <custom-select v-for="item in customArr" :data="item" :key="item.key"></custom-select>
-    </template>
+
     <result-box v-if="allowEditResult"/>
   </div>
   <!-- <progress-box></progress-box> -->
-
+    <!--  自定义标签-->
+    <div class="customSelectBlock" v-if="allowEditLabel" >
+        <custom-select v-for="item in customArr" :data="item" :key="item.key"></custom-select>
+    </div >
    <!--    超链接-->
   <!-- <hyberlink v-if="allowEditNode"></hyberlink> -->
   <!-- <picture-box v-if="allowEditNode"></picture-box> -->
@@ -140,3 +140,17 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.mind-tab-panel .menu-container .customSelectBlock {
+  flex: 1;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+}
+.customSelectBlock > div {
+  margin-left: 4px;
+  min-width: 120px;
+}
+
+</style>

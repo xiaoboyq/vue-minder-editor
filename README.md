@@ -220,3 +220,4 @@ cd kityminder-core && npm run build && cd ..
 # License
 
 BSD 3-Clause (基于fex-team/kityminder-core，并非kityminder-editor)
+

@@ -106,6 +106,8 @@ export default {
         }
       }
       const selected = this.minder.queryCommandValue('custom')
+      // console.log('this.sourceData', this.sourceData)
+      // console.log('selected', selected)
       if (!this.sourceData) {
         return
       }
@@ -114,10 +116,17 @@ export default {
       if (selected === null) {
         return
       }
+      let flag = false // 记录是否有选择的标签
       if (selected.length > 0) {
-        const currentSelect = selected[0].split('：')
-        if (this.sourceData.key === currentSelect[0]) {
-          this.sourceSelectedData = currentSelect[1]
+        selected.forEach(element => {
+          const currentSelect = element.split('：')
+          if (this.sourceData.key === currentSelect[0]) {
+            flag = true
+            this.sourceSelectedData = currentSelect[1]
+          }
+        })
+        if (!flag) {
+          this.sourceSelectedData = ''
         }
       } else {
         this.sourceSelectedData = ''

@@ -27,11 +27,11 @@ export default {
         {
           key: 'name1', 
           options: [
-            {value: 1, text: '测试啊'},
+            {value: '测试啊', text: '测试啊'},
             {value: 2, text: 2},
             {value: 3, text: 3},
-            {value: 31, text: 3},
-            {value: 32, text: 4},
+            {value: 31, text: 31},
+            {value: 32, text: 32},
             {value: 33, text: 5},
             {value: 34, text: 6},
             {value: 35, text: 7},
