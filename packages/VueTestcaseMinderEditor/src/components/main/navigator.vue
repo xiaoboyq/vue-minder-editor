@@ -41,271 +41,270 @@ import {
 import screenfull from 'screenfull'
 import $ from 'jquery'
 
-
 export default {
-  name: "navigator",
+  name: 'navigator',
   data () {
     return {
       zoom: 100,
       isNavOpen: true,
-      $previewNavigator: "",
-      paper: "",
-      nodeThumb: "",
-      connectionThumb: "",
-      visibleRect: "",
-      contentView: "",
-      visibleView: "",
-      pathHandler: "",
-    };
+      $previewNavigator: '',
+      paper: '',
+      nodeThumb: '',
+      connectionThumb: '',
+      visibleRect: '',
+      contentView: '',
+      visibleView: '',
+      pathHandler: ''
+    }
   },
   computed: {
     ...mapGetters('caseEditorStore', {
-      minder: "getMinder",
-      config: "config",
+      minder: 'getMinder',
+      config: 'config'
     }),
-    enableHand() {
+    enableHand () {
       return (
         this.minder.queryCommandState &&
-        this.minder.queryCommandState("hand") == 1
-      );
+        this.minder.queryCommandState('hand') == 1
+      )
     },
-    zoomRadioIn() {
-      return this.getZoomRadio(this.zoom) == 0;
+    zoomRadioIn () {
+      return this.getZoomRadio(this.zoom) == 0
     },
-    zoomRadioOut() {
-      return this.getZoomRadio(this.zoom) == 1;
-    },
+    zoomRadioOut () {
+      return this.getZoomRadio(this.zoom) == 1
+    }
   },
   methods: {
-    ...mapActions('caseEditorStore', ["setMemory", "getMemory"]),
+    ...mapActions('caseEditorStore', ['setMemory', 'getMemory']),
 
-    fullScreenToggle() {
-      if (screenfull.isEnabled){
-        if (screenfull.isFullscreen){
-          screenfull.exit();
+    fullScreenToggle () {
+      if (screenfull.isEnabled) {
+        if (screenfull.isFullscreen) {
+          screenfull.exit()
         } else {
-          screenfull.toggle();
+          screenfull.toggle()
         }
-      }else {
-        this.$message.error('您的浏览器不支持全屏操作！');
+      } else {
+        this.$message.error('您的浏览器不支持全屏操作！')
       }
     },
-    //避免缓存
-    getNavOpenState() {
-      var res = window.localStorage.getItem("navigator-hidden");
-      return res;
+    // 避免缓存
+    getNavOpenState () {
+      var res = window.localStorage.getItem('navigator-hidden')
+      return res
     },
 
-    zoomIn() {
-      this.minder.execCommand("zoomIn");
+    zoomIn () {
+      this.minder.execCommand('zoomIn')
     },
 
-    RestoreSize() {
-      this.minder.execCommand("zoom", 100);
+    RestoreSize () {
+      this.minder.execCommand('zoom', 100)
     },
 
-    zoomOut() {
-      this.minder.execCommand("zoomOut");
+    zoomOut () {
+      this.minder.execCommand('zoomOut')
     },
 
-    hand() {
-      this.minder.execCommand("hand");
+    hand () {
+      this.minder.execCommand('hand')
     },
 
-    getZoomRadio(value) {
-      var zoomStack = this.minder.getOption && this.minder.getOption("zoom");
+    getZoomRadio (value) {
+      var zoomStack = this.minder.getOption && this.minder.getOption('zoom')
       if (!zoomStack) {
-        return;
+        return
       }
-      var minValue = zoomStack[0];
-      var maxValue = zoomStack[zoomStack.length - 1];
-      var valueRange = maxValue - minValue;
-      return 1 - (value - minValue) / valueRange;
+      var minValue = zoomStack[0]
+      var maxValue = zoomStack[zoomStack.length - 1]
+      var valueRange = maxValue - minValue
+      return 1 - (value - minValue) / valueRange
     },
 
-    getHeight(value) {
-      var totalHeight = $(".zoom-pan").height();
-      return this.getZoomRadio(value) * totalHeight;
+    getHeight (value) {
+      var totalHeight = $('.zoom-pan').height()
+      return this.getZoomRadio(value) * totalHeight
     },
 
-    locateToOrigin() {
-      this.minder.execCommand("camera", minder.getRoot(), 600);
+    locateToOrigin () {
+      this.minder.execCommand('camera', minder.getRoot(), 600)
     },
 
-    toggleNavOpen() {
-      var self = this;
-      var isNavOpen = "";
-      isNavOpen = !JSON.parse(self.getNavOpenState());
+    toggleNavOpen () {
+      var self = this
+      var isNavOpen = ''
+      isNavOpen = !JSON.parse(self.getNavOpenState())
       self.setMemory({
-        key: "navigator-hidden",
-        value: isNavOpen,
-      });
-      self.isNavOpen = isNavOpen;
+        key: 'navigator-hidden',
+        value: isNavOpen
+      })
+      self.isNavOpen = isNavOpen
       setTimeout(function () {
         if (self.isNavOpen) {
-          self.bind();
-          self.updateContentView();
-          self.updateVisibleView();
+          self.bind()
+          self.updateContentView()
+          self.updateVisibleView()
         } else {
-          self.unbind();
+          self.unbind()
         }
-      }, 100);
+      }, 100)
     },
 
-    bind() {
-      this.minder.on("layout layoutallfinish", this.updateContentView);
-      this.minder.on("viewchange", this.updateVisibleView);
+    bind () {
+      this.minder.on('layout layoutallfinish', this.updateContentView)
+      this.minder.on('viewchange', this.updateVisibleView)
     },
 
-    unbind() {
-      this.minder.off("layout layoutallfinish", this.updateContentView);
-      this.minder.off("viewchange", this.updateVisibleView);
+    unbind () {
+      this.minder.off('layout layoutallfinish', this.updateContentView)
+      this.minder.off('viewchange', this.updateVisibleView)
     },
 
-    getPathHandler(theme) {
+    getPathHandler (theme) {
       switch (theme) {
-        case "tianpan":
-        case "tianpan-compact":
+        case 'tianpan':
+        case 'tianpan-compact':
           return function (nodePathData, x, y, width, height) {
-            var r = width >> 1;
-            nodePathData.push("M", x, y + r, "a", r, r, 0, 1, 1, 0, 0.01, "z");
-          };
+            var r = width >> 1
+            nodePathData.push('M', x, y + r, 'a', r, r, 0, 1, 1, 0, 0.01, 'z')
+          }
         default: {
           return function (nodePathData, x, y, width, height) {
             nodePathData.push(
-              "M",
+              'M',
               x,
               y,
-              "h",
+              'h',
               width,
-              "v",
+              'v',
               height,
-              "h",
+              'h',
               -width,
-              "z"
-            );
-          };
+              'z'
+            )
+          }
         }
       }
     },
 
-    updateContentView() {
-      var self = this;
-      var view = self.minder.getRenderContainer().getBoundaryBox();
-      self.contentView = view;
-      var padding = 30;
+    updateContentView () {
+      var self = this
+      var view = self.minder.getRenderContainer().getBoundaryBox()
+      self.contentView = view
+      var padding = 30
       self.paper.setViewBox(
         view.x - padding - 0.5,
         view.y - padding - 0.5,
         view.width + padding * 2 + 1,
         view.height + padding * 2 + 1
-      );
-      var nodePathData = [];
-      var connectionThumbData = [];
+      )
+      var nodePathData = []
+      var connectionThumbData = []
       self.minder.getRoot().traverse(function (node) {
-        var box = node.getLayoutBox();
-        self.pathHandler(nodePathData, box.x, box.y, box.width, box.height);
-   /*     nodePathData.push('M', box.x, box.y,
+        var box = node.getLayoutBox()
+        self.pathHandler(nodePathData, box.x, box.y, box.width, box.height)
+        /*     nodePathData.push('M', box.x, box.y,
           'h', box.width, 'v', box.height,
-          'h', -box.width, 'z');*/
+          'h', -box.width, 'z'); */
         if (node.getConnection() && node.parent && node.parent.isExpanded()) {
-          connectionThumbData.push(node.getConnection().getPathData());
+          connectionThumbData.push(node.getConnection().getPathData())
         }
-      });
-      self.paper.setStyle("background", minder.getStyle("background"));
+      })
+      self.paper.setStyle('background', minder.getStyle('background'))
       if (nodePathData.length) {
         self.nodeThumb
-          .fill(minder.getStyle("root-background"))
-          .setPathData(nodePathData);
+          .fill(minder.getStyle('root-background'))
+          .setPathData(nodePathData)
       } else {
-        self.nodeThumb.setPathData(null);
+        self.nodeThumb.setPathData(null)
       }
       if (connectionThumbData.length) {
         self.connectionThumb
-          .stroke(minder.getStyle("connect-color"), "0.5%")
-          .setPathData(connectionThumbData);
+          .stroke(minder.getStyle('connect-color'), '0.5%')
+          .setPathData(connectionThumbData)
       } else {
-        self.connectionThumb.setPathData(null);
+        self.connectionThumb.setPathData(null)
       }
-      self.updateVisibleView();
+      self.updateVisibleView()
     },
 
-    updateVisibleView() {
-      this.visibleView = this.minder.getViewDragger().getView();
-      this.visibleRect.setBox(this.visibleView.intersect(this.contentView));
-    },
+    updateVisibleView () {
+      this.visibleView = this.minder.getViewDragger().getView()
+      this.visibleRect.setBox(this.visibleView.intersect(this.contentView))
+    }
   },
 
-  mounted() {
-    var self = this;
-    var minder = self.minder;
+  mounted () {
+    var self = this
+    var minder = self.minder
 
     // 以下部分是缩略图导航器
-    self.$previewNavigator = $(".nav-previewer");
+    self.$previewNavigator = $('.nav-previewer')
 
     // 画布，渲染缩略图
-    self.paper = new kity.Paper(self.$previewNavigator[0]);
+    self.paper = new kity.Paper(self.$previewNavigator[0])
 
     // 用两个路径来挥之节点和连线的缩略图
-    self.nodeThumb = self.paper.put(new kity.Path());
-    self.connectionThumb = self.paper.put(new kity.Path());
+    self.nodeThumb = self.paper.put(new kity.Path())
+    self.connectionThumb = self.paper.put(new kity.Path())
 
     // 表示可视区域的矩形
     self.visibleRect = self.paper.put(
-      new kity.Rect(100, 100).stroke("red", "1%")
-    );
-    self.contentView = new kity.Box();
-    self.visibleView = new kity.Box();
+      new kity.Rect(100, 100).stroke('red', '1%')
+    )
+    self.contentView = new kity.Box()
+    self.visibleView = new kity.Box()
 
-    self.pathHandler = self.getPathHandler(minder.getTheme());
+    self.pathHandler = self.getPathHandler(minder.getTheme())
     minder.setDefaultOptions({
-      zoom: self.config.zoom,
-    });
+      zoom: self.config.zoom
+    })
 
     minder &&
-      minder.on("zoom", function (e) {
-        self.zoom = e.zoom;
-      });
+      minder.on('zoom', function (e) {
+        self.zoom = e.zoom
+      })
     if (self.isNavOpen) {
-      self.bind();
-      self.updateContentView();
-      self.updateVisibleView();
+      self.bind()
+      self.updateContentView()
+      self.updateVisibleView()
     } else {
-      self.unbind();
+      self.unbind()
     }
     // 主题切换事件
-    minder.on("themechange", function (e) {
-      this.pathHandler = self.getPathHandler(e.theme);
-    });
+    minder.on('themechange', function (e) {
+      this.pathHandler = self.getPathHandler(e.theme)
+    })
 
-    navigate();
+    navigate()
 
-    function navigate() {
-      function moveView(center, duration) {
-        var box = self.visibleView;
-        center.x = -center.x;
-        center.y = -center.y;
-        var viewMatrix = minder.getPaper().getViewPortMatrix();
-        box = viewMatrix.transformBox(box);
-        var targetPosition = center.offset(box.width / 2, box.height / 2);
-        minder.getViewDragger().moveTo(targetPosition, duration);
+    function navigate () {
+      function moveView (center, duration) {
+        var box = self.visibleView
+        center.x = -center.x
+        center.y = -center.y
+        var viewMatrix = minder.getPaper().getViewPortMatrix()
+        box = viewMatrix.transformBox(box)
+        var targetPosition = center.offset(box.width / 2, box.height / 2)
+        minder.getViewDragger().moveTo(targetPosition, duration)
       }
-      var dragging = false;
-      self.paper.on("mousedown", function (e) {
-        dragging = true;
-        moveView(e.getPosition("top"), 200);
-        self.$previewNavigator.addClass("grab");
-      });
-      self.paper.on("mousemove", function (e) {
+      var dragging = false
+      self.paper.on('mousedown', function (e) {
+        dragging = true
+        moveView(e.getPosition('top'), 200)
+        self.$previewNavigator.addClass('grab')
+      })
+      self.paper.on('mousemove', function (e) {
         if (dragging) {
-          moveView(e.getPosition("top"));
+          moveView(e.getPosition('top'))
         }
-      });
-      $(window).on("mouseup", function () {
-        dragging = false;
-        self.$previewNavigator && self.$previewNavigator.removeClass("grab");
-      });
+      })
+      $(window).on('mouseup', function () {
+        dragging = false
+        self.$previewNavigator && self.$previewNavigator.removeClass('grab')
+      })
     }
-  },
-};
+  }
+}
 </script>

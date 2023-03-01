@@ -16,45 +16,46 @@
 </template>
 
 <script>
-import editor from "./components/editor.vue";
-import Vue from "vue";
+import editor from './components/editor.vue'
+import Vue from 'vue'
 
 // 非正规写法，这个 store 为了方便外部引用得变成一个 module
-import caseEditorStore from "./store";
+import caseEditorStore from './store'
 // import "element-ui/lib/theme-chalk/index.css";
-import ElementUI from "element-ui";
+import ElementUI from 'element-ui'
 
-require("codemirror");
-require("codemirror/mode/xml/xml");
-require("codemirror/mode/javascript/javascript");
-require("codemirror/mode/css/css");
-require("codemirror/mode/htmlmixed/htmlmixed");
-require("codemirror/mode/markdown/markdown");
-require("codemirror/addon/mode/overlay");
-require("codemirror/mode/gfm/gfm");
-require("marked");
+import { mapMutations, mapGetters } from 'vuex'
 
-require("kity");
+require('codemirror')
+require('codemirror/mode/xml/xml')
+require('codemirror/mode/javascript/javascript')
+require('codemirror/mode/css/css')
+require('codemirror/mode/htmlmixed/htmlmixed')
+require('codemirror/mode/markdown/markdown')
+require('codemirror/addon/mode/overlay')
+require('codemirror/mode/gfm/gfm')
+require('marked')
+
+require('kity')
 
 // require('../node_modules/hotbox/hotbox.js')
-require("../../../hotbox/hotbox.js");
+require('../../../hotbox/hotbox.js')
 // require('../node_modules/kityminder-core/dist/kityminder.core.js')
-require("../../../kityminder-core/dist/kityminder.core.js");
+require('../../../kityminder-core/dist/kityminder.core.js')
 
-require("./script/expose-editor.js");
+require('./script/expose-editor.js')
 
-Vue.use(ElementUI);
 
-import { mapMutations, mapGetters } from "vuex";
+Vue.use(ElementUI)
 
 export default {
   components: { editor },
-  name: "VueTestcaseMinderEditor",
+  name: 'VueTestcaseMinderEditor',
   caseEditorStore,
-  data() {
+  data () {
     return {
-      minder: {},
-    };
+      minder: {}
+    }
   },
   props: {
     initJson: {
@@ -62,36 +63,36 @@ export default {
       default: {
         root: {
           data: {
-            id: "c9hol4de1iw0",
+            id: 'c9hol4de1iw0',
             created: 1614161753133,
-            text: "中心主题",
+            text: '中心主题'
           },
-          template: "default",
-          theme: "fresh-blue",
-          version: "1.4.43",
-        },
-      },
+          template: 'default',
+          theme: 'fresh-blue',
+          version: '1.4.43'
+        }
+      }
     },
     editNodeFn: Function,
     allowEditPriority: {
       type: Boolean,
-      default: true,
+      default: true
     },
     allowEditLabel: {
       type: Boolean,
-      default: true,
+      default: true
     },
     allowEditResult: {
       type: Boolean,
-      default: true,
+      default: true
     },
     allowEditNode: {
       type: Boolean,
-      default: true,
+      default: true
     },
     allowOperate: {
       type: Boolean,
-      default: true,
+      default: true
     },
     tagEditCheck: Function,
     tags: {
@@ -104,67 +105,67 @@ export default {
     }
   },
   computed: {
-    ...mapGetters("caseEditorStore", ["config"]),
+    ...mapGetters('caseEditorStore', ['config'])
   },
   methods: {
-    ...mapMutations("caseEditorStore", ["setConfig"]),
-    getJsonData() {
-      return this.minder.exportJson();
-    },
+    ...mapMutations('caseEditorStore', ['setConfig']),
+    getJsonData () {
+      return this.minder.exportJson()
+    }
   },
-  mounted() {
+  mounted () {
     // TODO: 直接从 window 取 minder 不大好，应该调用 vuex
-    this.minder = window.minder;
-    this.minder.importJson(this.initJson);
+    this.minder = window.minder
+    this.minder.importJson(this.initJson)
   },
   watch: {
     // 因为父组件有可能是通过异步等方式来获取初始化 Json 的，
     // 因此需要监听这个属性值的变化，一旦有变化重新加载。
     initJson: {
       deep: true,
-      handler(val) {
-        this.minder.importJson(val);
-      },
+      handler (val) {
+        this.minder.importJson(val)
+      }
     },
     tags: {
       immediate: true,
-      handler(value) {
-        this.setConfig({ tags: value });
-      },
+      handler (value) {
+        this.setConfig({ tags: value })
+      }
     },
     customArr: {
       immediate: true,
-      handler(value) {
-        this.setConfig({ customArr: value });
-      },
+      handler (value) {
+        this.setConfig({ customArr: value })
+      }
     },
     allowEditPriority: {
-      handler(value) {
-        this.setConfig({ allowEditPriority: value });
-      },
+      handler (value) {
+        this.setConfig({ allowEditPriority: value })
+      }
     },
     allowEditLabel: {
-      handler(value) {
-        this.setConfig({ allowEditLabel: value });
-      },
+      handler (value) {
+        this.setConfig({ allowEditLabel: value })
+      }
     },
     allowEditResult: {
-      handler(value) {
-        this.setConfig({ allowEditResult: value });
-      },
+      handler (value) {
+        this.setConfig({ allowEditResult: value })
+      }
     },
     allowEditNode: {
-      handler(value) {
-        this.setConfig({ allowEditNode: value });
-      },
+      handler (value) {
+        this.setConfig({ allowEditNode: value })
+      }
     },
     allowOperate: {
-      handler(value) {
-        this.setConfig({ allowOperate: value });
-      },
-    },
-  },
-};
+      handler (value) {
+        this.setConfig({ allowOperate: value })
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>

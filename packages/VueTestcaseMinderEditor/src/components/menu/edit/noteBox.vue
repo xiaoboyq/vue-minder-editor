@@ -32,54 +32,54 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters } from 'vuex'
 
 export default {
-  name: "nodeBox",
-  data() {
+  name: 'nodeBox',
+  data () {
     return {
       noteShow: false,
-      note: "",
-    };
+      note: ''
+    }
   },
   computed: {
-    ...mapGetters("caseEditorStore", {
-      count: "count",
-      minder: "getMinder",
-    }),
+    ...mapGetters('caseEditorStore', {
+      count: 'count',
+      minder: 'getMinder'
+    })
   },
   methods: {
-    handleNoteCommand(command) {
+    handleNoteCommand (command) {
       switch (command) {
-        case "add":
-          this.addNote();
-          break;
-        case "remove":
-          this.removeNote();
-          break;
+        case 'add':
+          this.addNote()
+          break
+        case 'remove':
+          this.removeNote()
+          break
         default:
-          break;
+          break
       }
     },
-    addNote() {
-      this.noteShow = true;
-      this.note = this.minder.queryCommandValue("note");
+    addNote () {
+      this.noteShow = true
+      this.note = this.minder.queryCommandValue('note')
     },
-    removeNote() {
-      this.minder.execCommand("note", null);
+    removeNote () {
+      this.minder.execCommand('note', null)
     },
-    handleSubmit() {
-      this.minder.execCommand("note", this.note);
-      this.note = "";
-      this.noteShow = false;
+    handleSubmit () {
+      this.minder.execCommand('note', this.note)
+      this.note = ''
+      this.noteShow = false
     },
-    handleCancel() {
+    handleCancel () {
       // 重置填写内容
-      this.note = "";
-      this.noteShow = false;
-    },
-  },
-};
+      this.note = ''
+      this.noteShow = false
+    }
+  }
+}
 </script>
 
 <style scoped>

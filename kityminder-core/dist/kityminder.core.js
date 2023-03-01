@@ -1,6 +1,6 @@
 /*!
  * ====================================================
- * Kity Minder Core - v1.4.50 - 2023-01-10
+ * Kity Minder Core - v1.4.50 - 2023-03-01
  * https://github.com/fex-team/kityminder-core
  * GitHub: https://github.com/fex-team/kityminder-core.git 
  * Copyright (c) 2023 Baidu FEX; Licensed BSD-3-Clause
@@ -771,7 +771,7 @@ _p[12] = {
         kity.extendClass(Minder, {
             // 自动导入
             setup: function(target) {
-                if (typeof target == "string") {
+                if (typeof target === "string") {
                     target = document.querySelector(target);
                 }
                 if (!target) return;
@@ -812,7 +812,7 @@ _p[12] = {
                 return JSON.parse(JSON.stringify(json));
             },
             /**
-         * function Text2Children(MinderNode, String) 
+         * function Text2Children(MinderNode, String)
          * @param {MinderNode} node 要导入数据的节点
          * @param {String} text 导入的text数据
          * @Desc: 用于批量插入子节点，并不会修改被插入的父节点
@@ -825,18 +825,24 @@ _p[12] = {
          *              wereww
          *          12314
          *      1231412
-         *      13123    
+         *      13123
          */
             Text2Children: function(node, text) {
                 if (!(node instanceof kityminder.Node)) {
                     return;
                 }
-                var children = [], jsonMap = {}, level = 0;
+                var children = [];
+                var jsonMap = {};
+                var level = 0;
                 // 对换行的数据进行兼容
                 // var LINE_SPLITTER = /\r|\n|\r\n/,
                 //    TAB_REGEXP = /^(\t|\x20{4})/;
-                var LINE_SPLITTER = /\r|\r\n/, TAB_REGEXP = /^(\n\t|\t|\x20{4})/;
-                var lines = text.split(LINE_SPLITTER), line = "", jsonNode, i = 0;
+                var LINE_SPLITTER = /\r|\r\n/;
+                var TAB_REGEXP = /^(\n\t|\t|\x20{4})/;
+                var lines = text.split(LINE_SPLITTER);
+                var line = "";
+                var jsonNode;
+                var i = 0;
                 var minder = this;
                 function isEmpty(line) {
                     return line === "" && !/\S/.test(line);
@@ -1991,7 +1997,7 @@ _p[19] = {
                 var initHook;
                 while (initHooks.length) {
                     initHook = initHooks.shift();
-                    if (typeof initHook == "function") {
+                    if (typeof initHook === "function") {
                         initHook.call(this, this._options);
                     }
                 }
@@ -2207,7 +2213,8 @@ _p[21] = {
          * 获得节点的深度
          */
             getLevel: function() {
-                var level = 0, ancestor = this.parent;
+                var level = 0;
+                var ancestor = this.parent;
                 while (ancestor) {
                     level++;
                     ancestor = ancestor.parent;
@@ -2247,10 +2254,12 @@ _p[21] = {
                 return key ? this.data[key] : this.data;
             },
             setData: function(key, value) {
-                if (typeof key == "object") {
+                if (typeof key === "object") {
                     var data = key;
-                    for (key in data) if (data.hasOwnProperty(key)) {
-                        this.data[key] = data[key];
+                    for (key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            this.data[key] = data[key];
+                        }
                     }
                 } else {
                     this.data[key] = value;
@@ -2320,7 +2329,8 @@ _p[21] = {
                 return this.insertChild(node, 0);
             },
             removeChild: function(elem) {
-                var index = elem, removed;
+                var index = elem;
+                var removed;
                 if (elem instanceof MinderNode) {
                     index = this.children.indexOf(elem);
                 }
@@ -4622,12 +4632,13 @@ _p[43] = {
 _p[44] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
-        var utils = _p.r(33);
         var MinderNode = _p.r(21);
         var Command = _p.r(9);
         var Module = _p.r(20);
         Module.register("ClipboardModule", function() {
-            var km = this, _clipboardNodes = [], _selectedNodes = [];
+            var km = this;
+            var _clipboardNodes = [];
+            var _selectedNodes = [];
             function appendChildNode(parent, child) {
                 _selectedNodes.push(child);
                 km.appendNode(child, parent);
@@ -4703,6 +4714,7 @@ _p[44] = {
             var PasteCommand = kity.createClass("PasteCommand", {
                 base: Command,
                 execute: function(km) {
+                    console.log("km", km);
                     if (_clipboardNodes.length) {
                         var nodes = km.getSelectedNodes();
                         if (!nodes.length) return;
@@ -4768,12 +4780,13 @@ _p[44] = {
 };
 
 //src/module/custom.js
+/* eslint-disable no-undef */
 _p[45] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
-        var utils = _p.r(33);
+        // var utils = _p.r(33)
         var Minder = _p.r(19);
-        var MinderNode = _p.r(21);
+        // var MinderNode = _p.r(21)
         var Command = _p.r(9);
         var Module = _p.r(20);
         var Renderer = _p.r(27);
@@ -4781,71 +4794,96 @@ _p[45] = {
             // String Hash
             // https://github.com/drostie/sha3-js/edit/master/blake32.min.js
             var blake32 = function() {
-                var k, g, r, l, m, o, p, q, t, w, x;
-                x = 4 * (1 << 30);
-                k = [ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 ];
-                m = [ 608135816, 2242054355, 320440878, 57701188, 2752067618, 698298832, 137296536, 3964562569, 1160258022, 953160567, 3193202383, 887688300, 3232508343, 3380367581, 1065670069, 3041331479 ];
-                w = function(i) {
+                var iv;
+                var g;
+                var r;
+                var block;
+                var constants;
+                var sigma;
+                var circ;
+                var state;
+                var message;
+                var output;
+                var two32;
+                two32 = 4 * (1 << 30);
+                iv = [ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 ];
+                constants = [ 608135816, 2242054355, 320440878, 57701188, 2752067618, 698298832, 137296536, 3964562569, 1160258022, 953160567, 3193202383, 887688300, 3232508343, 3380367581, 1065670069, 3041331479 ];
+                output = function(i) {
                     if (i < 0) {
-                        i += x;
+                        i += two32;
                     }
                     return ("00000000" + i.toString(16)).slice(-8);
                 };
-                o = [ [ 16, 50, 84, 118, 152, 186, 220, 254 ], [ 174, 132, 249, 109, 193, 32, 123, 53 ], [ 139, 12, 37, 223, 234, 99, 23, 73 ], [ 151, 19, 205, 235, 98, 165, 4, 143 ], [ 9, 117, 66, 250, 30, 203, 134, 211 ], [ 194, 166, 176, 56, 212, 87, 239, 145 ], [ 92, 241, 222, 164, 112, 54, 41, 184 ], [ 189, 231, 28, 147, 5, 79, 104, 162 ], [ 246, 158, 59, 128, 44, 125, 65, 90 ], [ 42, 72, 103, 81, 191, 233, 195, 13 ] ];
-                p = function(a, b, n) {
-                    var s = q[a] ^ q[b];
-                    q[a] = s >>> n | s << 32 - n;
+                /* The spec calls for the sigma values at 2i and 2i + 1 to be passed into
+               * the g function simultaneously. This implementation uses a byte array to
+               * perform this task.
+               */
+                sigma = [ [ 16, 50, 84, 118, 152, 186, 220, 254 ], [ 174, 132, 249, 109, 193, 32, 123, 53 ], [ 139, 12, 37, 223, 234, 99, 23, 73 ], [ 151, 19, 205, 235, 98, 165, 4, 143 ], [ 9, 117, 66, 250, 30, 203, 134, 211 ], [ 194, 166, 176, 56, 212, 87, 239, 145 ], [ 92, 241, 222, 164, 112, 54, 41, 184 ], [ 189, 231, 28, 147, 5, 79, 104, 162 ], [ 246, 158, 59, 128, 44, 125, 65, 90 ], [ 42, 72, 103, 81, 191, 233, 195, 13 ] ];
+                circ = function(a, b, n) {
+                    var s = state[a] ^ state[b];
+                    state[a] = s >>> n | s << 32 - n;
                 };
                 g = function(i, a, b, c, d) {
-                    var u = l + o[r][i] % 16, v = l + (o[r][i] >> 4);
+                    var u = block + sigma[r][i] % 16;
+                    var v = block + (sigma[r][i] >> 4);
                     a %= 4;
                     b = 4 + b % 4;
                     c = 8 + c % 4;
                     d = 12 + d % 4;
-                    q[a] += q[b] + (t[u] ^ m[v % 16]);
-                    p(d, a, 16);
-                    q[c] += q[d];
-                    p(b, c, 12);
-                    q[a] += q[b] + (t[v] ^ m[u % 16]);
-                    p(d, a, 8);
-                    q[c] += q[d];
-                    p(b, c, 7);
+                    state[a] += state[b] + (message[u] ^ constants[v % 16]);
+                    circ(d, a, 16);
+                    state[c] += state[d];
+                    circ(b, c, 12);
+                    state[a] += state[b] + (message[v] ^ constants[u % 16]);
+                    circ(d, a, 8);
+                    state[c] += state[d];
+                    circ(b, c, 7);
                 };
-                return function(a, b) {
-                    if (!(b instanceof Array && b.length === 4)) {
-                        b = [ 0, 0, 0, 0 ];
+                return function(msg, salt) {
+                    if (!(salt instanceof Array && salt.length === 4)) {
+                        salt = [ 0, 0, 0, 0 ];
                     }
-                    var c, d, e, L, f, h, j, i;
-                    d = k.slice(0);
-                    c = m.slice(0, 8);
+                    var pad;
+                    var chain;
+                    var len;
+                    var L;
+                    var lastL;
+                    var last;
+                    var total;
+                    var i;
+                    chain = iv.slice(0);
+                    pad = constants.slice(0, 8);
                     for (r = 0; r < 4; r += 1) {
-                        c[r] ^= b[r];
+                        pad[r] ^= salt[r];
                     }
-                    e = a.length * 16;
-                    f = e % 512 > 446 || e % 512 === 0 ? 0 : e;
-                    if (e % 512 === 432) {
-                        a += "老";
+                    // pre-padding bit length of the string.
+                    len = msg.length * 16;
+                    lastL = len % 512 > 446 || len % 512 === 0 ? 0 : len;
+                    // padding step: append a 1, then a bunch of 0's until we're at 447 bits,
+                    // then another 1 (note: 448/16 = 28), then len as a 64-bit integer.
+                    if (len % 512 === 432) {
+                        msg += "老";
                     } else {
-                        a += "耀";
-                        while (a.length % 32 !== 27) {
-                            a += "\0";
+                        msg += "耀";
+                        while (msg.length % 32 !== 27) {
+                            msg += "\0";
                         }
-                        a += "";
+                        msg += "";
                     }
-                    t = [];
-                    for (i = 0; i < a.length; i += 2) {
-                        t.push(a.charCodeAt(i) * 65536 + a.charCodeAt(i + 1));
+                    message = [];
+                    for (i = 0; i < msg.length; i += 2) {
+                        message.push(msg.charCodeAt(i) * 65536 + msg.charCodeAt(i + 1));
                     }
-                    t.push(0);
-                    t.push(e);
-                    h = t.length - 16;
-                    j = 0;
-                    for (l = 0; l < t.length; l += 16) {
-                        j += 512;
-                        L = l === h ? f : Math.min(e, j);
-                        q = d.concat(c);
-                        q[12] ^= L;
-                        q[13] ^= L;
+                    message.push(0);
+                    message.push(len);
+                    last = message.length - 16;
+                    total = 0;
+                    for (block = 0; block < message.length; block += 16) {
+                        total += 512;
+                        L = block === last ? lastL : Math.min(len, total);
+                        state = chain.concat(pad);
+                        state[12] ^= L;
+                        state[13] ^= L;
                         for (r = 0; r < 10; r += 1) {
                             for (i = 0; i < 8; i += 1) {
                                 if (i < 4) {
@@ -4856,36 +4894,53 @@ _p[45] = {
                             }
                         }
                         for (i = 0; i < 8; i += 1) {
-                            d[i] ^= b[i % 4] ^ q[i] ^ q[i + 8];
+                            chain[i] ^= salt[i % 4] ^ state[i] ^ state[i + 8];
                         }
                     }
-                    return d.map(w).join("");
+                    return chain.map(output).join("");
                 };
             }();
             /**
-         * 自动使用的颜色序列
-         * 250
-         */
+             * 自动使用的颜色序列
+             * 250
+             */
             //  303  190 137
             // var RESOURCE_COLOR_SERIES = [51, 303, 190, 137, 0, 92].map(function(h) {
             //     return kity.Color.createHSL(h, 200, 205);
             // });
-            var RESOURCE_COLOR_SERIES = [ 51, 303, 75, 200, 157, 0, 26, 254, 190 ].map(function(h) {
-                return kity.Color.createHSL(h, 140, 65);
+            // HSLA(100, 60%, 80%, .5)
+            // H Hue 色调 就是区分其本质颜色的 （红橙黄绿蓝靛紫） 选值是：0度~360度 , 0是红色、120是绿色、240是蓝色、360也是红色
+            // S Saturation 饱和度  就是其纯度（通俗一点儿就是这个红色是纯红还是灰蒙蒙的红） 选值是：0%~100%, 0%饱和度最低，100%饱和度最高
+            // LLightness 亮度 就是说此颜色亮不亮 选值是：0%~100%， 0%最暗，100%最亮
+            // Alpha 不透明度
+            var RESOURCE_COLOR_SERIES = [ 0, 18, 36, 54, 72, 90, 108, 126, 144, 162, 180, 198, 216, 234, 252, 254, 270, 288, 306, 324, 342 ].map(function(h, i) {
+                var Saturation = [ 0, 50, 100, 75, 25 ];
+                // 饱和度
+                // var Saturation = [35, 65, 45, 75, 55] // 饱和度
+                var LLightness = [ 45, 75, 55, 85, 65 ];
+                // 亮度 【0时黑色】
+                var Alpha = [ 1, .65, .9, .75 ];
+                // 不透明度
+                // 20个 分4组  5 0-100
+                //  Color.createHSLA 中已经对s, l 进行%处理 s = s + '%'
+                //  return Color.createHSLA(h, s, l, 1);
+                return kity.Color.createHSLA(h, Saturation[i % 5], LLightness[i % 5], Alpha[i % 4]);
             });
             /**
-         * 在 Minder 上拓展一些关于资源的支持接口
-         */
+             * 在 Minder 上拓展一些关于资源的支持接口
+             */
             kity.extendClass(Minder, {
                 /**
-             * 获取字符串的哈希值
-             *
-             * @param {String} str
-             * @return {Number} hashCode
-             */
+                   * 获取字符串的哈希值
+                   *
+                   * @param {String} str
+                   * @return {Number} hashCode
+                   */
                 getHashCode: function(str) {
                     str = blake32(str);
-                    var hash = 1315423911, i, ch;
+                    var hash = 1315423911;
+                    var i;
+                    var ch;
                     for (i = str.length - 1; i >= 0; i--) {
                         ch = str.charCodeAt(i);
                         hash ^= (hash << 5) + ch + (hash >> 2);
@@ -4893,15 +4948,15 @@ _p[45] = {
                     return hash & 2059403263;
                 },
                 /**
-             * 获取脑图中某个资源对应的颜色
-             *
-             * 如果存在同名资源，则返回已经分配给该资源的颜色，否则分配给该资源一个颜色，并且返回
-             *
-             * 如果资源数超过颜色序列数量，返回哈希颜色
-             *
-             * @param {String} custom 资源名称
-             * @return {Color}
-             */
+                   * 获取脑图中某个资源对应的颜色
+                   *
+                   * 如果存在同名资源，则返回已经分配给该资源的颜色，否则分配给该资源一个颜色，并且返回
+                   *
+                   * 如果资源数超过颜色序列数量，返回哈希颜色
+                   *
+                   * @param {String} custom 资源名称
+                   * @return {Color}
+                   */
                 getCustomColor: function(custom) {
                     const customName = custom.split("：")[1] || "xx";
                     var colorMapping = this._getCustomColorIndexMapping();
@@ -4916,13 +4971,14 @@ _p[45] = {
                     return RESOURCE_COLOR_SERIES[colorMapping[customName]] || kity.Color.createHSL(Math.floor(this.getHashCode(customName) / 2147483647 * 359), 200, 185);
                 },
                 /**
-             * 获得已使用的资源的列表
-             *
-             * @return {Array}
-             */
+                   * 获得已使用的资源的列表
+                   *
+                   * @return {Array}
+                   */
                 getUsedCustom: function() {
                     var mapping = this._getCustomColorIndexMapping();
-                    var used = [], custom;
+                    var used = [];
+                    var custom;
                     for (custom in mapping) {
                         if (Object.prototype.hasOwnProperty.call(mapping, custom)) {
                             used.push(custom);
@@ -4931,10 +4987,10 @@ _p[45] = {
                     return used;
                 },
                 /**
-             * 获取脑图下一个可用的资源颜色索引
-             *
-             * @return {int}
-             */
+                   * 获取脑图下一个可用的资源颜色索引
+                   *
+                   * @return {int}
+                   */
                 _getNextCustomColorIndex: function() {
                     // 获取现有颜色映射
                     //     custom => color_index
@@ -4961,26 +5017,26 @@ _p[45] = {
                 }
             });
             /**
-         * @class 设置资源的命令
-         *
-         * @example
-         *
-         * // 设置选中节点资源为 "张三"
-         * minder.execCommand('custom', ['张三']);
-         *
-         * // 添加资源 "李四" 到选中节点
-         * var custom = minder.queryCommandValue();
-         * custom.push('李四');
-         * minder.execCommand('custom', custom);
-         *
-         * // 清除选中节点的资源
-         * minder.execCommand('custom', null);
-         */
+             * @class 设置资源的命令
+             *
+             * @example
+             *
+             * // 设置选中节点资源为 "张三"
+             * minder.execCommand('custom', ['张三']);
+             *
+             * // 添加资源 "李四" 到选中节点
+             * var custom = minder.queryCommandValue();
+             * custom.push('李四');
+             * minder.execCommand('custom', custom);
+             *
+             * // 清除选中节点的资源
+             * minder.execCommand('custom', null);
+             */
             var CustomCommand = kity.createClass("CustomCommand", {
                 base: Command,
                 execute: function(minder, custom) {
                     var nodes = minder.getSelectedNodes();
-                    if (typeof custom == "string") {
+                    if (typeof custom === "string") {
                         custom = [ custom ];
                     }
                     nodes.forEach(function(node) {
@@ -5007,10 +5063,10 @@ _p[45] = {
                 }
             });
             /**
-         * @class 资源的覆盖图形
-         *
-         * 该类为一个资源以指定的颜色渲染一个动态的覆盖图形
-         */
+             * @class 资源的覆盖图形
+             *
+             * 该类为一个资源以指定的颜色渲染一个动态的覆盖图形
+             */
             var CustomOverlay = kity.createClass("CustomOverlay", {
                 base: kity.Group,
                 constructor: function() {
@@ -5021,7 +5077,9 @@ _p[45] = {
                     this.addShapes([ rect, text ]);
                 },
                 setValue: function(customName, color) {
-                    var paddingX = 8, paddingY = 4, borderRadius = 4;
+                    var paddingX = 8;
+                    var paddingY = 4;
+                    // var borderRadius = 4
                     var text, box, rect;
                     text = this.text;
                     if (customName == this.lastCustomName) {
@@ -5043,8 +5101,8 @@ _p[45] = {
                 }
             });
             /**
-         * @class 资源渲染器
-         */
+             * @class 资源渲染器
+             */
             var CustomRenderer = kity.createClass("CustomRenderer", {
                 base: Renderer,
                 create: function(node) {
@@ -5058,9 +5116,9 @@ _p[45] = {
                     var spaceRight = node.getStyle("space-right");
                     var overlays = this.overlays;
                     /*  修复 custom 数组中出现 null 的 bug
-                 *  @Author zhangbobell
-                 *  @date 2016-01-15
-                 */
+                         *  @Author zhangbobell
+                         *  @date 2016-01-15
+                         */
                     var custom = node.getData("custom").filter(function(ele) {
                         return ele !== null;
                     });
@@ -5109,10 +5167,39 @@ _p[45] = {
 _p[46] = {
     value: function(require, exports, module) {
         var kity = _p.r(17);
-        var utils = _p.r(33);
+        var _clipboardNodes = [];
+        var _selectedNodes = [];
         var MinderNode = _p.r(21);
         var Command = _p.r(9);
         var Module = _p.r(20);
+        function sendToClipboard(nodes) {
+            if (!nodes.length) return;
+            nodes.sort(function(a, b) {
+                return a.getIndex() - b.getIndex();
+            });
+            _clipboardNodes = nodes.map(function(node) {
+                return node.clone();
+            });
+        }
+        function appendChildNode(parent, child, minder) {
+            _selectedNodes.push(child);
+            minder.appendNode(child, parent);
+            child.render();
+            child.setLayoutOffset(null);
+            var children = child.children.map(function(node) {
+                return node.clone();
+            });
+            /*
+          * fixed bug: Modified on 2015.08.05
+          * 原因：粘贴递归 append 时没有清空原来父节点的子节点，而父节点被复制的时候，是连同子节点一起复制过来的
+          * 解决办法：增加了下面这一行代码
+          * by: @zhangbobell zhangbobell@163.com
+          */
+            child.clearChildren();
+            for (var i = 0, ci; ci = children[i]; i++) {
+                appendChildNode(child, ci, minder);
+            }
+        }
         // 矩形的变形动画定义
         var MoveToParentCommand = kity.createClass("MoveToParentCommand", {
             base: Command,
@@ -5128,6 +5215,30 @@ _p[46] = {
                 }
                 parent.expand();
                 minder.select(nodes, true);
+                // 先复制原有的节点后 删除 复制到新的节点
+                var ancestors = minder.getSelectedAncestors();
+                if (ancestors.length === 0) return;
+                sendToClipboard(ancestors);
+                minder.select(MinderNode.getCommonAncestor(ancestors), true);
+                ancestors.slice().forEach(function(node) {
+                    console.log("node", node);
+                    minder.removeNode(node);
+                });
+                // console.log('ancestors', ancestors)
+                // ancestors.data.id
+                // 粘贴
+                if (_clipboardNodes.length) {
+                    var nodesCur = minder.getSelectedNodes();
+                    if (!nodesCur.length) return;
+                    for (var index = 0, ni; ni = _clipboardNodes[index]; index++) {
+                        for (var j = 0, ele; ele = nodesCur[j]; j++) {
+                            appendChildNode(ele, ni.clone(), minder);
+                        }
+                    }
+                    minder.select(_selectedNodes, true);
+                    _selectedNodes = [];
+                    minder.layout(300);
+                }
             }
         });
         var DropHinter = kity.createClass("DropHinter", {
@@ -5290,7 +5401,8 @@ _p[46] = {
             //
             _calcDropTargets: function() {
                 function findAvailableParents(nodes, root) {
-                    var availables = [], i;
+                    var availables = [];
+                    var i;
                     availables.push(root);
                     root.getChildren().forEach(function(test) {
                         for (i = 0; i < nodes.length; i++) {
@@ -5429,7 +5541,7 @@ _p[46] = {
                     },
                     "normal.mouseup dragtree.beforemouseup": function(e) {
                         dragger.dragEnd();
-                        //e.stopPropagation();
+                        // e.stopPropagation();
                         e.preventDefault();
                     },
                     statuschange: function(e) {
@@ -5895,7 +6007,8 @@ _p[49] = {
                         km.layout();
                     },
                     queryState: function(km) {
-                        var nodes = km.getSelectedNodes(), result = 0;
+                        var nodes = km.getSelectedNodes();
+                        var result = 0;
                         if (nodes.length === 0) {
                             return -1;
                         }
@@ -5923,7 +6036,7 @@ _p[49] = {
                         var link = new kity.HyperLink();
                         var linkshape = new kity.Path();
                         var outline = new kity.Rect(24, 22, -2, -6, 4).fill("rgba(255, 255, 255, 0)");
-                        linkshape.setPathData(linkShapePath).fill("#666");
+                        linkshape.setPathData(linkShapePath).fill("#783887");
                         link.addShape(outline);
                         link.addShape(linkshape);
                         link.setTarget("_blank");
@@ -5932,6 +6045,11 @@ _p[49] = {
                             outline.fill("rgba(255, 255, 200, .8)");
                         }).on("mouseout", function() {
                             outline.fill("rgba(255, 255, 255, 0)");
+                        });
+                        link.on("click", function(a) {
+                            const linkUrl = link.container.minderNode.data.hyperlink;
+                            console.log("link", link.container.minderNode.data.hyperlink);
+                            window.open(linkUrl);
                         });
                         return link;
                     },
@@ -6641,7 +6759,6 @@ _p[55] = {
                     //     node.getMinder().fire('editnoterequest');
                     // });
                     icon.on("click", function() {
-                        console.log("点击note", node);
                         // ID.length < 15 时 表示这是未保存的用例
                         if (node.data.id && node.data.id.length > 15) {
                             node.getMinder().fire("shownoterequest", {

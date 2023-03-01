@@ -21,34 +21,34 @@
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 
 export default {
-  name: "CustomSelect",
+  name: 'CustomSelect',
   props: {
     data: Object
   },
   computed: {
-    ...mapGetters("caseEditorStore", {
-      minder: "getMinder",
-      editor: "getEditor",
+    ...mapGetters('caseEditorStore', {
+      minder: 'getMinder',
+      editor: 'getEditor'
     }),
-    commandDisabled() {
-      let minder = this.minder;
-      minder.on && minder.on("interactchange", this.handleInteractChange);
+    commandDisabled () {
+      let minder = this.minder
+      minder.on && minder.on('interactchange', this.handleInteractChange)
       return (
         this.minder.queryCommandState &&
-        this.minder.queryCommandState("custom") === -1
-      );
-    },
+        this.minder.queryCommandState('custom') === -1
+      )
+    }
   },
-  data() {
+  data () {
     return {
       sourceData: {},
       isDisableSelect: false,
       sourceSelectedData: '',
       isInteracting: false
-    };
+    }
   },
   mounted () {
     if (this.data) {
@@ -99,10 +99,10 @@ export default {
     handleInteractChange () {
       if (this.tagEditCheck) {
         if (!this.tagEditCheck()) {
-          this.isDisableSelect = true;
-          return;
+          this.isDisableSelect = true
+          return
         } else {
-          this.isDisableSelect = false;
+          this.isDisableSelect = false
         }
       }
       const selected = this.minder.queryCommandValue('custom')
@@ -134,8 +134,8 @@ export default {
       this.isInteracting = true
       this.$nextTick(() => {
         this.isInteracting = false
-      });
-    },
-  },
-};
+      })
+    }
+  }
+}
 </script>

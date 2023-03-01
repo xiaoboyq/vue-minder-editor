@@ -6,35 +6,35 @@
  * @author: techird
  * @copyright: Baidu FEX, 2014
  */
-define(function(require, exports, module) {
-    var kity = require('./kity');
-    var utils = require('./utils');
+define(function (require, exports, module) {
+  var kity = require('./kity')
+  var utils = require('./utils')
 
-    var _initHooks = [];
+  var _initHooks = []
 
-    var Minder = kity.createClass('Minder', {
-        constructor: function(options) {
-            this._options = utils.extend({}, options);
+  var Minder = kity.createClass('Minder', {
+    constructor: function (options) {
+      this._options = utils.extend({}, options)
 
-            var initHooks = _initHooks.slice();
+      var initHooks = _initHooks.slice()
 
-            var initHook;
-            while (initHooks.length) {
-                initHook = initHooks.shift();
-                if (typeof(initHook) == 'function') {
-                    initHook.call(this, this._options);
-                }
-            }
-
-            this.fire('finishInitHook');
+      var initHook
+      while (initHooks.length) {
+        initHook = initHooks.shift()
+        if (typeof (initHook) === 'function') {
+          initHook.call(this, this._options)
         }
-    });
+      }
 
-    Minder.version = '1.4.43';
+      this.fire('finishInitHook')
+    }
+  })
 
-    Minder.registerInitHook = function(hook) {
-        _initHooks.push(hook);
-    };
+  Minder.version = '1.4.43'
 
-    module.exports = Minder;
-});
+  Minder.registerInitHook = function (hook) {
+    _initHooks.push(hook)
+  }
+
+  module.exports = Minder
+})

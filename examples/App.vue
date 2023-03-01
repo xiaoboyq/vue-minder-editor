@@ -9,6 +9,7 @@
       :tags="tags"
       :customArr="customArr"
       :editNodeFn="editNodeFn"
+      :linkToDetail="linkToDetail"
       :allowEditNode="editMode">
     </VueTestcaseMinderEditor>
 
@@ -32,11 +33,20 @@ export default {
             {value: 3, text: 3},
             {value: 31, text: 31},
             {value: 32, text: 32},
-            {value: 33, text: 5},
-            {value: 34, text: 6},
-            {value: 35, text: 7},
-            {value: 36, text: 8},
-            {value: 36, text: 9},
+            {value: 5, text: 5},
+            {value: 6, text: 6},
+            {value: 7, text: 7},
+            {value: 8, text: 8},
+            {value: 9, text: 9},
+            {value: 10, text: 10},
+            {value: 11, text: 11},
+            {value: 12, text: 12},
+            {value: 13, text: 13},
+            {value: 14, text: 14},
+            {value: 15, text: 15},
+            {value: 16, text: 16},
+            {value: 17, text: 17},
+            {value: 18, text: 18},
           ]
         },
         {
@@ -63,8 +73,8 @@ export default {
             { data: { text: '图片', id: '6', priority: 3 } },
             { data: { text: '视频', id: '7', priority: 3 } },
             { data: { text: '地图', id: '8', priority: 3, note: 34 } },
-            { data: { text: '百科', id: '9', priority: 3, note: '' } },
-            { data: { text: '更多', id: '10', hyperlink: 'http://www.baidu.com/more' } }
+            { data: { text: '百科', id: '9', priority: 3, note: '', hyperlink: 'https://www.baidu.com/', hyperlinkTitle: '1223' } },
+            { data: { text: '更多', id: '10', hyperlink: 'http://10.252.10.212:8081' } }
           ]
         },
         template: 'right'
@@ -92,6 +102,9 @@ export default {
     editNodeFn: function(node) {
       console.log('node', node)
       // alert(123)
+    },
+    linkToDetail: function(node) {
+      console.log('linkToDetail', node)
     },
     logCurrentData: function(event) {
       const caseJson = this.$refs.minderEditor.getJsonData();
