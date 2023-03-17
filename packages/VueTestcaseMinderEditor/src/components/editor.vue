@@ -183,7 +183,7 @@ export default {
       window.minder.importJson(json)
     },
     reloadModules (config) {
-      window.minder.enable()
+      window.minder && window.minder.enable && window.minder.enable()
       // 对应去掉 kityminder-core 里的相关组件
       var disableModuleNames = []
       if (!config.allowEditPriority) {

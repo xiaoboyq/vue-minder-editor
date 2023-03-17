@@ -26,37 +26,37 @@ export default {
     return {
       customArr: [
         {
-          key: 'name1', 
+          key: 'name1',
           options: [
-            {value: '测试啊', text: '测试啊'},
-            {value: 2, text: 2},
-            {value: 3, text: 3},
-            {value: 31, text: 31},
-            {value: 32, text: 32},
-            {value: 5, text: 5},
-            {value: 6, text: 6},
-            {value: 7, text: 7},
-            {value: 8, text: 8},
-            {value: 9, text: 9},
-            {value: 10, text: 10},
-            {value: 11, text: 11},
-            {value: 12, text: 12},
-            {value: 13, text: 13},
-            {value: 14, text: 14},
-            {value: 15, text: 15},
-            {value: 16, text: 16},
-            {value: 17, text: 17},
-            {value: 18, text: 18},
+            { value: '测试啊', text: '测试啊' },
+            { value: 2, text: 2 },
+            { value: 3, text: 3 },
+            { value: 31, text: 31 },
+            { value: 32, text: 32 },
+            { value: 5, text: 5 },
+            { value: 6, text: 6 },
+            { value: 7, text: 7 },
+            { value: 8, text: 8 },
+            { value: 9, text: 9 },
+            { value: 10, text: 10 },
+            { value: 11, text: 11 },
+            { value: 12, text: 12 },
+            { value: 13, text: 13 },
+            { value: 14, text: 14 },
+            { value: 15, text: 15 },
+            { value: 16, text: 16 },
+            { value: 17, text: 17 },
+            { value: 18, text: 18 }
           ]
         },
         {
           key: 'name2',
           options: [
-            {value: 1, text: 1},
-            {value: 2, text: 2},
-            {value: 3, text: 3},
+            { value: 1, text: 1 },
+            { value: 2, text: 2 },
+            { value: 3, text: 3 }
           ]
-        },
+        }
       ],
       initJson: {
         root: {
@@ -85,7 +85,7 @@ export default {
     }
   },
   computed: {
-    buttonText: function() {
+    buttonText: function () {
       return this.editMode === false ? '进入编辑模式，允许修改脑图内容及登记结果' : '退出编辑模式'
     }
   },
@@ -99,24 +99,24 @@ export default {
   //   })
   // },
   methods: {
-    editNodeFn: function(node) {
+    editNodeFn: function (node) {
       console.log('node', node)
       // alert(123)
     },
-    linkToDetail: function(node) {
+    linkToDetail: function (node) {
       console.log('linkToDetail', node)
     },
-    logCurrentData: function(event) {
-      const caseJson = this.$refs.minderEditor.getJsonData();
+    logCurrentData: function (event) {
+      const caseJson = this.$refs.minderEditor.getJsonData()
       console.log('编辑器中的最新用例内容：', caseJson)
       const nodeDatas = {}
       this.checkJsonHasDuplicateId(caseJson.root, nodeDatas)
-      let hasDuplicateId = false;
-      Object.keys(nodeDatas).forEach(function(key) {
+      let hasDuplicateId = false
+      Object.keys(nodeDatas).forEach(function (key) {
         const nodeData = nodeDatas[key]
         if (nodeData.length > 1) {
           console.log('重复id内容: ', nodeData)
-          hasDuplicateId = true;
+          hasDuplicateId = true
         }
       })
       if (hasDuplicateId) {
@@ -125,14 +125,14 @@ export default {
         this.$message('未发现重复 id ')
       }
     },
-    toggleEditMode: function(event) {
+    toggleEditMode: function (event) {
       this.editMode = !this.editMode
     },
-    checkJsonHasDuplicateId: function(jsonData, nodeDatas) {
+    checkJsonHasDuplicateId: function (jsonData, nodeDatas) {
       // console.log("checkJsonHasDuplicateId", jsonData, nodeDatas)
-      let id;
+      let id
       if (jsonData && jsonData.data && jsonData.data.id) {
-        id = jsonData.data.id;
+        id = jsonData.data.id
       }
       if (id !== undefined) {
         if (!Object.keys(nodeDatas).includes(id)) {
@@ -143,8 +143,8 @@ export default {
       }
       if (jsonData.children && jsonData.children.length > 0) {
         jsonData.children.forEach(element => {
-          this.checkJsonHasDuplicateId(element, nodeDatas);
-        });
+          this.checkJsonHasDuplicateId(element, nodeDatas)
+        })
       }
     }
   }

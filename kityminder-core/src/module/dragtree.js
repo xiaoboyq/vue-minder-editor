@@ -275,6 +275,7 @@ define(function (require, exports, module) {
       })
     },
 
+    //  暂时 去除拖拽加入其子元素
     // 计算拖放目标可以释放的节点列表（释放意味着成为其子树），存在这条限制规则：
     //    - 不能拖放到拖放目标的子树上（允许拖放到自身，因为多选的情况下可以把其它节点加入）
     //
@@ -288,7 +289,8 @@ define(function (require, exports, module) {
       function findAvailableParents (nodes, root) {
         var availables = []
         var i
-        availables.push(root)
+        // 去除拖拽加入其子元素功能
+        // availables.push(root)
         root.getChildren().forEach(function (test) {
           for (i = 0; i < nodes.length; i++) {
             if (nodes[i] == test) return
@@ -368,7 +370,9 @@ define(function (require, exports, module) {
           sourceBox = sourceBoxes[j]
 
           var intersectBox = sourceBox.intersect(targetBox)
+          console.log('intersectBox', intersectBox)
           if (judge(intersectBox, sourceBox, targetBox)) {
+            console.log('true, 正常')
             return target
           }
         }
@@ -386,13 +390,12 @@ define(function (require, exports, module) {
         }
         if (!intersectBox) return false
         /*
-                * Added by zhangbobell, 2015.9.8
-                *
-                * 增加了下面一行判断，修复了循环比较中 targetBox 为折叠节点时，intersetBox 面积为 0，
-                * 而 targetBox 的 width 和 height 均为 0
-                * 此时造成了满足以下的第二个条件而返回 true
-                * */
-        if (!area(intersectBox)) return false
+          *
+          * 增加了下面一行判断，修复了循环比较中 targetBox 为折叠节点时，intersetBox 面积为 0，
+          * 而 targetBox 的 width 和 height 均为 0
+          * 此时造成了满足以下的第二个条件而返回 true
+          * */
+        if (!area(intersectBox)) return true
         // 面积判断，交叉面积大于其中的一半
         if (area(intersectBox) > 0.5 * Math.min(area(sourceBox), area(targetBox))) return true
         // 有一个边完全重合的情况，也认为两个是交叉的
