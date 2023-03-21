@@ -28,7 +28,9 @@ define(function (require, exports, module) {
           return false
         }
         if (childNode.children) {
-          return validExpendData(childNode.children)
+          if (!validExpendData(childNode.children)) {
+            return false
+          }
         }
       }
       return true
