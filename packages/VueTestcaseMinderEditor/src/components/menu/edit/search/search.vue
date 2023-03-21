@@ -20,39 +20,39 @@
 
 <script>
 
-  import {
-    mapGetters,
-  } from 'vuex';
+import {
+  mapGetters
+} from 'vuex'
 
-  export default {
-    name: "search",
-    inject: ['main'],
+export default {
+  name: 'search',
+  inject: ['main'],
 
-    data() {
-      return {}
-    },
-    computed: {
-      ...mapGetters('caseEditorStore', {
-        count: 'count',
-        'minder': 'getMinder',
-      }),
-    },
+  data () {
+    return {}
+  },
+  computed: {
+    ...mapGetters('caseEditorStore', {
+      count: 'count',
+      minder: 'getMinder'
+    })
+  },
 
-    methods: {
-      handleSearchCommand(command) {
-        switch (command) {
-          case 'word':
-            this.main.openSearchBox();
-            break;
-          case 'label':
-            this.main.openLabelBox();
-            break;
-          default:
-            break;
-        }
-      },
+  methods: {
+    handleSearchCommand (command) {
+      switch (command) {
+        case 'word':
+          this.main.openSearchBox()
+          break
+        case 'label':
+          this.main.openLabelBox()
+          break
+        default:
+          break
+      }
     }
   }
+}
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 /*!
  * ====================================================
- * Kity Minder Core - v1.4.50 - 2023-03-16
+ * Kity Minder Core - v1.4.50 - 2023-03-20
  * https://github.com/fex-team/kityminder-core
  * GitHub: https://github.com/fex-team/kityminder-core.git 
  * Copyright (c) 2023 Baidu FEX; Licensed BSD-3-Clause
@@ -4640,6 +4640,8 @@ _p[44] = {
             var _clipboardNodes = [];
             var _selectedNodes = [];
             function appendChildNode(parent, child) {
+                console.log("parent", parent);
+                console.log("child", child);
                 _selectedNodes.push(child);
                 km.appendNode(child, parent);
                 child.render();
@@ -4714,6 +4716,7 @@ _p[44] = {
             var PasteCommand = kity.createClass("PasteCommand", {
                 base: Command,
                 execute: function(km) {
+                    console.log("_clipboardNodes", _clipboardNodes);
                     console.log("km", km);
                     if (_clipboardNodes.length) {
                         var nodes = km.getSelectedNodes();
@@ -4741,6 +4744,7 @@ _p[44] = {
                 var Copy = function(e) {
                     this.fire("beforeCopy", e);
                 };
+                console.log("Copy", Copy);
                 var Cut = function(e) {
                     this.fire("beforeCut", e);
                 };
@@ -5573,7 +5577,9 @@ _p[47] = {
         var Renderer = _p.r(27);
         Module.register("Expand", function() {
             var minder = this;
-            var EXPAND_STATE_DATA = "expandState", STATE_EXPAND = "expand", STATE_COLLAPSE = "collapse";
+            var EXPAND_STATE_DATA = "expandState";
+            var STATE_EXPAND = "expand";
+            var STATE_COLLAPSE = "collapse";
             // 将展开的操作和状态读取接口拓展到 MinderNode 上
             kity.extendClass(MinderNode, {
                 /**

@@ -10,6 +10,8 @@ define(function (require, exports, module) {
     var _selectedNodes = []
 
     function appendChildNode (parent, child) {
+      console.log('parent', parent)
+      console.log('child', child)
       _selectedNodes.push(child)
       km.appendNode(child, parent)
       child.render()
@@ -99,6 +101,7 @@ define(function (require, exports, module) {
       base: Command,
 
       execute: function (km) {
+        console.log('_clipboardNodes', _clipboardNodes)
         console.log('km', km)
         if (_clipboardNodes.length) {
           var nodes = km.getSelectedNodes()
@@ -132,6 +135,7 @@ define(function (require, exports, module) {
         this.fire('beforeCopy', e)
       }
 
+      console.log('Copy', Copy)
       var Cut = function (e) {
         this.fire('beforeCut', e)
       }
@@ -141,29 +145,29 @@ define(function (require, exports, module) {
       }
 
       return {
-        'commands': {
-          'copy': CopyCommand,
-          'cut': CutCommand,
-          'paste': PasteCommand
+        commands: {
+          copy: CopyCommand,
+          cut: CutCommand,
+          paste: PasteCommand
         },
-        'clipBoardEvents': {
-          'copy': Copy.bind(km),
-          'cut': Cut.bind(km),
-          'paste': Paste.bind(km)
+        clipBoardEvents: {
+          copy: Copy.bind(km),
+          cut: Cut.bind(km),
+          paste: Paste.bind(km)
         },
         sendToClipboard: sendToClipboard
       }
     } else {
       return {
-        'commands': {
-          'copy': CopyCommand,
-          'cut': CutCommand,
-          'paste': PasteCommand
+        commands: {
+          copy: CopyCommand,
+          cut: CutCommand,
+          paste: PasteCommand
         },
-        'commandShortcutKeys': {
-          'copy': 'normal::ctrl+c|',
-          'cut': 'normal::ctrl+x',
-          'paste': 'normal::ctrl+v'
+        commandShortcutKeys: {
+          copy: 'normal::ctrl+c|',
+          cut: 'normal::ctrl+x',
+          paste: 'normal::ctrl+v'
         },
         sendToClipboard: sendToClipboard
       }

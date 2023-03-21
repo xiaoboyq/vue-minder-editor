@@ -18,6 +18,22 @@ define(function (require, exports, module) {
     var _selectedNodes = []
 
     /*
+     * 验证是否有未展开的节点
+     */
+    function validExpendData (nodes) {
+      if (!nodes.length) return true
+      for (let index = 0; index < nodes.length; index++) {
+        const childNode = nodes[index]
+        if (!childNode.isExpanded()) {
+          return false
+        }
+        if (childNode.children) {
+          return validExpendData(childNode.children)
+        }
+      }
+      return true
+    }
+    /*
      * 增加对多节点赋值粘贴的处理
      */
     function encode (nodes) {
@@ -39,6 +55,11 @@ define(function (require, exports, module) {
           }
           case 'normal': {
             var nodes = [].concat(minder.getSelectedNodes())
+            if (!validExpendData(nodes)) {
+              window.minder.fire('showMessage', { des: '请展开当前节点下全部主题后再复制或剪切' })
+              clipBoardEvent.clipboardData.clearData('text/plain', null)
+              return
+            }
             if (nodes.length) {
               // 这里由于被粘贴复制的节点的id信息也都一样，故做此算法
               // 这里有个疑问，使用node.getParent()或者node.parent会离奇导致出现非选中节点被渲染成选中节点，因此使用isAncestorOf，而没有使用自行回溯的方式
@@ -69,10 +90,10 @@ define(function (require, exports, module) {
                     pnode = nodes[pidx]
                   }
                 };
-              };
-              var str = encode(nodes)
-              clipBoardEvent.clipboardData.setData('text/plain', str)
+              }
             }
+            var str = encode(nodes)
+            clipBoardEvent.clipboardData.setData('text/plain', str)
             e.preventDefault()
             break
           }
@@ -97,6 +118,11 @@ define(function (require, exports, module) {
           case 'normal': {
             markDeleteNode(minder)
             var nodes = minder.getSelectedNodes()
+            if (!validExpendData(nodes)) {
+              window.minder.fire('showMessage', { des: '请展开当前节点下全部主题后再复制或剪切' })
+              clipBoardEvent.clipboardData.clearData('text/plain', null)
+              return
+            }
             if (nodes.length) {
               clipBoardEvent.clipboardData.setData('text/plain', encode(nodes))
               minder.execCommand('removenode')
@@ -129,7 +155,6 @@ define(function (require, exports, module) {
           child.data.contextChanged = true
           child.data.changed = true
           child.data.created = (new Date()).valueOf()
-          console.log('chid', child)
           updateChildrenNodesId(child)
         })
       }
@@ -145,8 +170,13 @@ define(function (require, exports, module) {
         var clipBoardEvent = e
         var state = fsm.state()
         var textData = clipBoardEvent.clipboardData.getData('text/plain')
-        console.log('sNodes--复制-textData', textData)
-        console.log('state', state)
+        // console.log('textData', textData)
+        // console.log('textData_type', typeof textData)
+        // console.log('textData_l', textData.length)
+        if (typeof textData === 'string' && !textData.replace(/(^\s*)|(\s*$)/g, '')) {
+          return
+        }
+        // console.log('state', state)
         switch (state) {
           case 'input': {
             // input状态下如果格式为application/km则不进行paste操作

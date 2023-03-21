@@ -49,7 +49,7 @@ import {
 } from 'vuex'
 export default {
   name: 'attachment',
-  data() {
+  data () {
     return {
       options1: [{
         value: '选项1',
@@ -87,12 +87,12 @@ export default {
       'changeCount',
       'increment',
       'clearMemory',
-      'setMemory',
+      'setMemory'
     ]),
-    test(key, value) {
-      this.clearMemory(key, value);
+    test (key, value) {
+      this.clearMemory(key, value)
     },
-    showOverlay() {
+    showOverlay () {
       this.$msgbox({
         title: '输入',
         message: '暂时未实现，敬请期待！',
@@ -101,20 +101,20 @@ export default {
         cancelButtonText: '取消',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
-            instance.confirmButtonLoading = true;
-            instance.confirmButtonText = '执行中...';
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
             setTimeout(() => {
-              done();
+              done()
               setTimeout(() => {
-                instance.confirmButtonLoading = false;
-              }, 300);
-            }, 3000);
+                instance.confirmButtonLoading = false
+              }, 300)
+            }, 3000)
           } else {
-            done();
+            done()
           }
         }
-      }).then(action => {});
-    },
+      }).then(action => {})
+    }
   }
 }
 </script>

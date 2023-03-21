@@ -16,8 +16,8 @@
     </div>
 
     <!--    查询过滤文本框-->
-    <search-box ref="searchBox" />
-    <search-label-box ref="searchLabelBox"></search-label-box>
+    <!-- <search-box ref="searchBox" /> -->
+    <!-- <search-label-box ref="searchLabelBox"></search-label-box> -->
   </div>
 </template>
 

@@ -42,68 +42,67 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 
 export default {
-  name: "searchLabelBox",
-  data() {
+  name: 'searchLabelBox',
+  data () {
     return {
       reslove: null,
       reject: null,
       visible: false,
       formData: {
         priority: [],
-        sourceSelected: [],
+        sourceSelected: []
       },
-      sourceData: [],
-    };
+      sourceData: []
+    }
   },
   computed: {
-    ...mapGetters("caseEditorStore", {
-      minder: "getMinder",
-    }),
+    ...mapGetters('caseEditorStore', {
+      minder: 'getMinder'
+    })
   },
   methods: {
-    openModal() {
-      this.visible = true;
-      this.initData();
+    openModal () {
+      this.visible = true
+      this.initData()
       return new Promise((resolve, reject) => {
-        this.resolve = resolve;
-        this.reject = reject;
-      });
+        this.resolve = resolve
+        this.reject = reject
+      })
     },
-    handleSubmit() {
-      this.resolve(this.formData);
-      this.visible = false;
+    handleSubmit () {
+      this.resolve(this.formData)
+      this.visible = false
     },
-    handleCancel() {
+    handleCancel () {
       // 重置填写内容
-      this.initData();
-      this.visible = false;
+      this.initData()
+      this.visible = false
     },
-    handleClose(done) {
+    handleClose (done) {
       // 重置填写内容
-      this.initData();
-      done();
+      this.initData()
+      done()
     },
-    initData() {
+    initData () {
       this.formData = {
         priority: [],
-        sourceSelected: [],
-      };
+        sourceSelected: []
+      }
       const sourceData = this.minder
         .getUsedResource()
         .map(function (resourceName) {
           return {
-            name: resourceName,
-          };
-        });
-      this.sourceData = sourceData;
-    },
-  },
-};
+            name: resourceName
+          }
+        })
+      this.sourceData = sourceData
+    }
+  }
+}
 </script>
-
 
 <style scoped>
 </style>
